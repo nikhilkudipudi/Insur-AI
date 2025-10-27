@@ -1,0 +1,29 @@
+{
+
+   "home": "मुखपृष्ठ",
+  "features": "विशेषताएं",
+  "login": "लॉगिन",
+  "signup": "साइन अप करें",
+  "welcome": "इंश्योरएआई में आपका स्वागत है",
+  "tagline": "स्मार्ट बीमा नीति स्वचालन और बुद्धिमत्ता प्रणाली",
+  "heroTitle": "एआई-आधारित बीमा सरल बनाता है",
+  "heroSubtitle": "नीतियों का प्रबंधन करें, दावे दर्ज करें, और सब कुछ एक ही जगह पर ट्रैक करें।",
+  "getStarted": "शुरू करें",
+  "learnMore": "अधिक जानें",
+  "availablePolicies": "उपलब्ध बीमा नीतियाँ",
+  "whyChoose": "InsurAI क्यों चुनें?",
+  
+  "featuresTitle": "उपलब्ध बीमा नीतियां",
+  "lifeInsurance": "जीवन बीमा",
+  "healthInsurance": "स्वास्थ्य बीमा",
+  "propertyInsurance": "संपत्ति और हानि बीमा",
+  "commercialInsurance": "व्यावसायिक बीमा",
+  "learnMore": "और जानें",
+
+   "loginTitle": "InsurAI में लॉगिन करें",
+  "emailPlaceholder": "ईमेल",
+  "passwordPlaceholder": "पासवर्ड",
+  "loginButton": "लॉगिन करें",
+  "noAccount": "क्या आपके पास खाता नहीं है?",
+  "signupLink": "साइन अप करें"
+}

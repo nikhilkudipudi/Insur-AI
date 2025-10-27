@@ -4,25 +4,21 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
+import Features from "./components/Features";
 
 export default function App() {
   return (
       <BrowserRouter>
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-grow">
+      <main className="grow">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route
-              path="/features"
-              element={
-                <div className="text-center mt-10 text-3xl font-semibold text-green-700">
-                  Features Page Coming Soon...
-                </div>
-              }
-            />
+            
+              <Route path="/features" element={<Features />} /> 
+            
           </Routes>
         </main>
       <Footer />

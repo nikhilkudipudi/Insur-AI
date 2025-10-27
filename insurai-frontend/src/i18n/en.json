@@ -1,0 +1,46 @@
+{
+
+  
+  "home": "Home",
+  "features": "Features",
+  "login": "Login",
+  "signup": "Sign Up",
+  "welcome": "Welcome to InsurAI",
+  "tagline": "Smart Insurance Policy Automation and Intelligence System",
+
+
+  "heroTitle": "AI-Powered Insurance Made Simple",
+  "heroSubtitle": "Manage your policies, file claims, and track everything in one place.",
+  "getStarted": "Get Started",
+  "learnMore": "Learn More",
+  "availablePolicies": "Available Insurance Policies",
+  "whyChoose": "Why Choose InsurAI?",
+   "featuresTitle": "Available Insurance Policies",
+  "lifeInsurance": "Life Insurance",
+  "healthInsurance": "Health Insurance",
+  "propertyInsurance": "Property & Casualty",
+  "commercialInsurance": "Commercial Insurance",
+  "learnMore": "Learn More",
+   "signupTitle": "Create Your InsurAI Account",
+  "emailPlaceholder": "Email",
+  "phonePlaceholder": "Phone Number",
+  "passwordPlaceholder": "Create Password",
+  "signupButton": "Sign Up",
+  "alreadyHaveAccount": "Already have an account?",
+  "loginLink": "Login",
+
+   "signupTitle": "Create Your InsurAI Account",
+  "emailPlaceholder": "Email",
+  "phonePlaceholder": "Phone Number",
+  "passwordPlaceholder": "Create Password",
+  "signupButton": "Sign Up",
+  "haveAccount": "Already have an account?",
+  "loginLink": "Login",
+
+   "loginTitle": "Login to InsurAI",
+  "emailPlaceholder": "Email",
+  "passwordPlaceholder": "Password",
+  "loginButton": "Login",
+  "noAccount": "Don’t have an account?",
+  "signupLink": "Sign Up"
+}
