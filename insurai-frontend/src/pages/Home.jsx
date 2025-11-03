@@ -4,6 +4,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { MessageCircle } from "lucide-react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
+// ✅ Import GIFs from assets
+import LifeGif from "../assets/Life.gif";
+import HealthGif from "../assets/Health.gif";
+import PropertyGif from "../assets/Property.gif";
+import CommercialGif from "../assets/Commercial.gif";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -12,34 +17,42 @@ export default function Home() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // 🌿 Feature data with backgrounds
   const features = [
     {
       id: 1,
-      title: t("lifeInsurance"),
-      description: t("lifeInsuranceDesc"),
-      image: "/life-insurance.png",
+      title: t("lifeInsurance") || "Life Insurance",
+      description:
+      
+        "Protect your loved ones with smart life coverage.",
+      bg: LifeGif,
     },
     {
       id: 2,
-      title: t("healthInsurance"),
-      description: t("healthInsuranceDesc"),
-      image: "/health-insurance.png",
+      title: t("healthInsurance") || "Health Insurance",
+      description:
+       
+        "Comprehensive health coverage with instant claim support.",
+      bg: HealthGif,
     },
     {
       id: 3,
-      title: t("propertyInsurance"),
-      description: t("propertyInsuranceDesc"),
-      image: "/property-insurance.png",
+      title: t("propertyInsurance") || "Property & Casualty",
+      description:
+        "Safeguard your assets against unforeseen losses.",
+      bg: PropertyGif,
     },
     {
       id: 4,
-      title: t("commercialInsurance"),
-      description: t("commercialInsuranceDesc"),
-      image: "/commercial-insurance.png",
+      title: t("commercialInsurance") || "Commercial Insurance",
+      description:
+       
+        "Empower your business with reliable commercial protection.",
+      bg: CommercialGif,
     },
   ];
 
-  // 🌿 Scroll to features section when clicked from navbar
+  // 🪄 Scroll to features section when clicked from navbar
   useEffect(() => {
     if (location.state?.scrollToFeatures) {
       const featuresSection = document.getElementById("features-section");
@@ -51,7 +64,7 @@ export default function Home() {
     }
   }, [location]);
 
-  // 🧠 Show chatbot when features section is visible, hide near footer
+  // 💬 Show chatbot when features section is visible, hide near footer
   useEffect(() => {
     const handleScroll = () => {
       const featuresSection = document.getElementById("features-section");
@@ -75,89 +88,156 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* 🌟 Hero Section */}
-      <div className="min-h-screen flex flex-col items-center justify-center text-center bg-gradient-to-b from-green-50 to-white px-4">
-        <h2 className="text-4xl font-bold text-green-600">{t("heroTitle")}</h2>
-        <p className="mt-4 text-gray-700 max-w-2xl">{t("heroSubtitle")}</p>
-      </div>
+      <div className="min-h-[90vh] flex flex-col items-center justify-center text-center bg-gradient-to-b from-green-100 via-white to-green-50 px-4">
+        <h2 className="text-5xl md:text-6xl font-extrabold text-green-700 leading-tight">
+          Smarter Insurance. <br /> Powered by AI.
+        </h2>
+        <p className="mt-4 text-gray-700 max-w-2xl text-lg md:text-xl">
+          Simplify insurance management with automation, intelligence, and
+          seamless experience.
+        </p>
+        <button
+          onClick={() => {
+            const featuresSection = document.getElementById("features-section");
+            if (featuresSection) {
+              featuresSection.scrollIntoView({ behavior: "smooth" });
+            }
+          }}
+          className="mt-8 bg-green-600 text-white px-8 py-3 rounded-full shadow-lg hover:bg-green-700 transition-all font-semibold text-lg"
+        >
+          Explore Our Features
+        </button>
 
-     {/* 🌿 Features Section */}
-<div
-  id="features-section"
-  className="bg-gradient-to-b from-green-50 via-white to-green-100 py-20 px-6"
->
-  <h2 className="text-4xl md:text-5xl font-extrabold text-center text-green-700 mb-16 tracking-tight">
-    {t("featuresTitle")}
-  </h2>
-
-  <div className="max-w-6xl mx-auto space-y-16">
-    {features.map((feature, index) => (
-      <div
-        key={feature.id}
-        onClick={() =>
-          setSelected(feature.id === selected ? null : feature.id)
-        }
-        className={`relative flex flex-col md:flex-row items-center gap-10 md:gap-16 p-8 bg-white rounded-3xl shadow-lg border border-green-200 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] ${
-          index % 2 === 1 ? "md:flex-row-reverse" : ""
-        } ${selected === feature.id ? "ring-4 ring-green-400" : ""}`}
-      >
-        {/* Feature Image */}
-        <div className="flex-shrink-0">
-          <img
-            src={feature.image}
-            alt={feature.title}
-            className="w-32 h-32 md:w-40 md:h-40 object-contain drop-shadow-md hover:scale-110 transition-transform duration-300"
+        {/* Decorative animation */}
+        <div className="mt-12 opacity-80">
+          <DotLottieReact
+            src="https://lottie.host/09dd6087-06d3-424b-a0a0-d88b033da06f/p4srAxknYt.lottie"
+            loop
+            autoplay
+            style={{ width: "220px", height: "220px" }}
           />
         </div>
-
-        {/* Feature Content */}
-        <div className="text-center md:text-left">
-          <h3 className="text-3xl font-semibold text-green-700 mb-3">
-            {feature.title}
-          </h3>
-          <p className="text-gray-600 leading-relaxed max-w-md mx-auto md:mx-0">
-            {feature.description ||
-              "Experience the next generation of intelligent insurance solutions powered by AI and automation."}
-          </p>
-
-          <button
-            onClick={() => navigate("/login")}
-            className="mt-6 inline-flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-lg font-medium shadow-md hover:bg-green-700 hover:shadow-lg transition-all"
-          >
-            {t("learnMore") || "Learn More"}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
-          </button>
-        </div>
-
-        {/* Overlay Animation (when selected) */}
-        {selected === feature.id && (
-          <div className="absolute inset-0 bg-green-600 bg-opacity-90 text-white flex flex-col items-center justify-center rounded-3xl transition-all duration-500 backdrop-blur-sm">
-            <h4 className="text-3xl font-bold mb-3">{feature.title}</h4>
-            <button
-              onClick={() => navigate("/login")}
-              className="bg-white text-green-700 px-5 py-2 rounded-lg font-semibold hover:bg-green-100 transition"
-            >
-              {t("learnMore")}
-            </button>
-          </div>
-        )}
       </div>
-    ))}
-  </div>
-</div>
 
+      {/* 🌿 Features Section */}
+      <div
+        id="features-section"
+        className="bg-gradient-to-b from-green-50 via-white to-green-100 py-20 px-6"
+      >
+        <h2 className="text-4xl md:text-5xl font-extrabold text-center text-green-700 mb-16 tracking-tight">
+          {t("featuresTitle") || "Our Core Insurance Plans"}
+        </h2>
+
+        <div className="max-w-6xl mx-auto space-y-16">
+          {features.map((feature, index) => (
+            <div
+              key={feature.id}
+              onClick={() =>
+                setSelected(feature.id === selected ? null : feature.id)
+              }
+              className={`relative flex flex-col md:flex-row items-center gap-10 md:gap-16 p-8 bg-white rounded-3xl shadow-lg border border-green-200 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] overflow-hidden ${
+                index % 2 === 1 ? "md:flex-row-reverse" : ""
+              } ${selected === feature.id ? "ring-4 ring-green-400" : ""}`}
+            >
+              {/* ✅ Background GIF */}
+              <div
+                className="absolute inset-0 opacity-30 bg-center bg-cover rounded-3xl scale-105 hover:scale-110 transition-transform duration-500"
+                style={{ backgroundImage: `url(${feature.bg})` }}
+              ></div>
+
+              {/* Content Overlay */}
+              <div className="relative z-10 text-center md:text-left">
+                <h3 className="text-3xl font-semibold text-green-700 mb-3 drop-shadow-sm">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-700 leading-relaxed max-w-md mx-auto md:mx-0">
+                  {feature.description}
+                </p>
+
+                <button
+                  onClick={() => navigate("/login")}
+                  className="mt-6 inline-flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-lg font-medium shadow-md hover:bg-green-700 hover:shadow-lg transition-all"
+                >
+                  {t("learnMore") || "Learn More"}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 🌟 Additional Highlights Section */}
+      <section className="bg-green-50 py-20 px-6 border-t border-green-100">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-green-700 mb-12">
+            Why Choose <span className="text-green-600">InsurAI?</span>
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {/* Item 1 */}
+            <div className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 flex flex-col items-center text-center border border-green-100">
+              <img
+                src="/support.svg"
+                alt="24/7 Support"
+                className="w-20 h-20 mb-6"
+              />
+              <h3 className="text-2xl font-semibold text-green-700 mb-2">
+                24/7 Customer Support
+              </h3>
+              <p className="text-gray-600">
+                We’re always here for you. Get round-the-clock assistance for
+                your policies, claims, and queries.
+              </p>
+            </div>
+
+            {/* Item 2 */}
+            <div className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 flex flex-col items-center text-center border border-green-100">
+              <img
+                src="/agent-help.svg"
+                alt="Expert Agents"
+                className="w-20 h-20 mb-6"
+              />
+              <h3 className="text-2xl font-semibold text-green-700 mb-2">
+                Dedicated Agent Assistance
+              </h3>
+              <p className="text-gray-600">
+                Our expert agents are ready to guide you through every insurance
+                decision with personalized advice.
+              </p>
+            </div>
+
+            {/* Item 3 */}
+            <div className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 flex flex-col items-center text-center border border-green-100">
+              <img
+                src="/ai-insights.svg"
+                alt="AI Insights"
+                className="w-20 h-20 mb-6"
+              />
+              <h3 className="text-2xl font-semibold text-green-700 mb-2">
+                Smart AI Insights
+              </h3>
+              <p className="text-gray-600">
+                Make data-driven decisions with AI-powered recommendations and
+                predictive analysis.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* 💬 Floating Chatbot Button */}
       {showChatbot && (
