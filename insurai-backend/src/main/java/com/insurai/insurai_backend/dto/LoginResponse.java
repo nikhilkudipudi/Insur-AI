@@ -13,7 +13,7 @@ public class LoginResponse {
     public LoginResponse() {
     }
 
-    public LoginResponse(String message, String token) {
+    public LoginResponse(String token, String message) {
         this.message = message;
         this.token = token;
     }

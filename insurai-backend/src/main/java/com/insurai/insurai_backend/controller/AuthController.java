@@ -41,7 +41,7 @@ public class AuthController {
         try {
             // Encrypt password before saving
             System.out.println(request.getPassword());
-            request.setPassword(passwordEncoder.encode(request.getPassword()));
+            request.setPassword(request.getPassword());
             System.out.println(request.getPassword());
             UserDetails user = userDetailsService.registerUser(request);
             return ResponseEntity.ok("User registered successfully with email: ");
@@ -64,7 +64,7 @@ public class AuthController {
            if (userOptional.isEmpty()) {
               System.out.print(userOptional.get().getEmail());
                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                       .body(new LoginResponse(null, "Invalid credentials!"));
+                       .body(new LoginResponse(null, "Invalid!"));
          }
 
             UserDetails user = (UserDetails) userOptional.get();
