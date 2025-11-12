@@ -1,25 +1,27 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User } from "lucide-react";
+import { isAuthenticated, getUserRole, logoutUser } from "../utils/auth";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [showMenu, setShowMenu] = useState(false);
-  const [activeButton, setActiveButton] = useState("Home"); // track active nav
+  const [activeButton, setActiveButton] = useState("Home");
+  const [auth, setAuth] = useState(isAuthenticated());
+  const [role, setRole] = useState(getUserRole());
 
-  const publicPaths = ["/", "/features", "/login", "/signup"];
-  const isDashboard =
-    location.pathname.startsWith("/admin") ||
-    location.pathname.startsWith("/user");
+  // update auth state whenever route changes
+  useEffect(() => {
+    setAuth(isAuthenticated());
+    setRole(getUserRole());
+  }, [location]);
 
   const handleFeaturesClick = () => {
     setActiveButton("Features");
     if (location.pathname === "/") {
       const featuresSection = document.getElementById("features-section");
-      if (featuresSection) {
-        featuresSection.scrollIntoView({ behavior: "smooth" });
-      }
+      if (featuresSection) featuresSection.scrollIntoView({ behavior: "smooth" });
     } else {
       navigate("/", { state: { scrollToFeatures: true } });
     }
@@ -34,12 +36,21 @@ export default function Navbar() {
     }
   };
 
+  const handleLogout = () => {
+    logoutUser(); // clears token + redirects to /login
+  };
+
+  // navigation buttons (shown only if NOT logged in)
   const buttons = [
     { name: "Home", onClick: handleHomeClick },
     { name: "Features", onClick: handleFeaturesClick },
     { name: "Login", path: "/login" },
     { name: "Sign Up", path: "/signup" },
   ];
+
+  const isDashboard =
+    location.pathname.startsWith("/admin") ||
+    location.pathname.startsWith("/user");
 
   return (
     <>
@@ -54,16 +65,18 @@ export default function Navbar() {
         </h1>
 
         {/* NAVIGATION BUTTONS */}
-        {!isDashboard && (
+        {!isDashboard && !auth && (
           <div className="flex gap-6">
             {buttons.map((btn) => (
               <button
                 key={btn.name}
                 onClick={
-                  btn.onClick ? btn.onClick : () => {
-                    setActiveButton(btn.name);
-                    navigate(btn.path);
-                  }
+                  btn.onClick
+                    ? btn.onClick
+                    : () => {
+                        setActiveButton(btn.name);
+                        navigate(btn.path);
+                      }
                 }
                 className="relative px-4 py-2 font-semibold text-white hover:text-green-100 transition-colors duration-300"
               >
@@ -78,24 +91,44 @@ export default function Navbar() {
           </div>
         )}
 
-        {/* DASHBOARD USER MENU */}
-        {isDashboard && (
+        {/* LOGGED-IN USER MENU */}
+        {auth && (
           <div className="relative">
             <button
               onClick={() => setShowMenu(!showMenu)}
               className="flex items-center gap-2 bg-green-700 px-3 py-2 rounded-full hover:bg-green-800 transition"
             >
               <User className="w-5 h-5" />
+              <span className="font-semibold">{role === "ADMIN" ? "Admin" : "User"}</span>
             </button>
 
             {showMenu && (
-              <div className="absolute right-0 mt-2 bg-white text-green-700 rounded-lg shadow-lg w-32">
+              <div className="absolute right-0 mt-2 bg-white text-green-700 rounded-lg shadow-lg w-40">
+                {role === "ADMIN" ? (
+                  <button
+                    onClick={() => {
+                      setShowMenu(false);
+                      navigate("/admin");
+                    }}
+                    className="w-full text-left px-4 py-2 hover:bg-green-100 rounded-lg"
+                  >
+                    Dashboard
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setShowMenu(false);
+                      navigate("/user");
+                    }}
+                    className="w-full text-left px-4 py-2 hover:bg-green-100 rounded-lg"
+                  >
+                    Dashboard
+                  </button>
+                )}
+
                 <button
-                  onClick={() => {
-                    setShowMenu(false);
-                    navigate("/login");
-                  }}
-                  className="w-full text-left px-4 py-2 hover:bg-green-100 rounded-lg"
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-green-100 rounded-lg"
                 >
                   Logout
                 </button>
@@ -105,6 +138,7 @@ export default function Navbar() {
         )}
       </nav>
 
+      {/* spacing for fixed navbar */}
       <div className="pt-20"></div>
     </>
   );

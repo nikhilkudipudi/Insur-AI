@@ -33,11 +33,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserDetails user = userDetailsRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
-
+        String role = user.getRole();
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
                 .password(user.getPassword())
-                .roles()
+                .roles(role)
                 .build();
     }
 
@@ -47,9 +47,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails registerUser(com.insurai.insurai_backend.dto.SignUpRequest request) {
         UserDetails newUser = new UserDetails();
         newUser.setEmail(request.getEmail());
+        newUser.setFullName(request.getFullName());
+        newUser.setPassword((request.getPassword()));
 
-        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-        newUser.setPhoneNumber(request.getPhoneNumber());
+
+        if (request.getRole() != null && !request.getRole().isEmpty()) {
+            newUser.setRole(request.getRole().toUpperCase());
+        } else {
+            newUser.setRole("USER");
+        }
         return userDetailsRepository.save(newUser);
     }
 
@@ -62,54 +68,3 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 }
 
-
-
-///////////////////////////////
-
-
-//import com.insurai.insurai_backend.dto.SignUpRequest;
-//import com.insurai.insurai_backend.repository.UserDetailsRepository;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.core.userdetails.UserDetails;
-//import org.springframework.security.core.userdetails.UserDetailsService;
-//import org.springframework.security.core.userdetails.UsernameNotFoundException;
-//import org.springframework.stereotype.Service;
-//
-//import java.util.Optional;
-//
-//@Service
-//public class CustomUserDetailsService implements UserDetailsService {
-//    @Autowired
-//    private UserDetailsRepository userDetailsRepository;
-//
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//
-//
-//        com.insurai.insurai_backend.entity.UserDetails user = userDetailsRepository.findByEmail(username)
-//                .orElseThrow(() -> {
-//                    System.out.println("User not found: " + username);
-//                    return new UsernameNotFoundException("User not found with username: " + username);
-//                });
-//
-//
-//        return org.springframework.security.core.userdetails.User.builder()
-//                .username(user.getEmail())
-//                .password(user.getPassword())
-//                .roles(null)
-//                .build();
-//    }
-//
-//    public Optional<com.insurai.insurai_backend.entity.UserDetails> findByEmail(String email) {
-//        return userDetailsRepository.findByEmail(email);
-//    }
-//
-//    public UserDetails registerUser(com.insurai.insurai_backend.dto.SignUpRequest request) {
-//        UserDetails newUser = new UserDetails();
-//        newUser.setEmail(request.getEmail());
-//
-//        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-//        newUser.setPhoneNumber(request.getPhoneNumber());
-//        return userDetailsRepository.save(newUser);
-//    }
-//}

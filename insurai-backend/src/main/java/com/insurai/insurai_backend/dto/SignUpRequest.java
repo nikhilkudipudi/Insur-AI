@@ -1,9 +1,27 @@
 package com.insurai.insurai_backend.dto;
 
 public class SignUpRequest {
+    private String fullName;
     private String email;
     private String password;
-    private String phoneNumber;
+
+    private String role;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 
     public String getEmail() {
         return email;
@@ -21,11 +39,5 @@ public class SignUpRequest {
         this.password = password;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
 }

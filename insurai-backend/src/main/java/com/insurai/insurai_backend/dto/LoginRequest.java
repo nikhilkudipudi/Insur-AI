@@ -1,12 +1,18 @@
 package com.insurai.insurai_backend.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
 
 public class LoginRequest {
     private String email;
     private String password;
+    private String role;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     public String getEmail() {
         return email;

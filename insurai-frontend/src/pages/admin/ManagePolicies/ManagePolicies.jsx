@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { PlusCircle, Edit, Trash2, Eye, ShieldCheck } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { PlusCircle, Edit, Trash2, Eye, ShieldCheck, ArrowLeft, LayoutDashboard } from "lucide-react";
 
 export default function ManagePolicies() {
   const [selectedType, setSelectedType] = useState(null);
+  const navigate = useNavigate();
 
   const policyTypes = [
     {
@@ -32,10 +34,30 @@ export default function ManagePolicies() {
   ];
 
   const managementOptions = [
-    { id: "add", title: "Add New Policy", icon: <PlusCircle className="w-6 h-6" /> },
-    { id: "update", title: "Update Existing Policy", icon: <Edit className="w-6 h-6" /> },
-    { id: "remove", title: "Remove Policy", icon: <Trash2 className="w-6 h-6" /> },
-    { id: "view", title: "View All Policies", icon: <Eye className="w-6 h-6" /> },
+    {
+      id: "add",
+      title: "Add New Policy",
+      icon: <PlusCircle className="w-6 h-6" />,
+      path: "/admin/manage-policies/add", // ✅ correct path
+    },
+    {
+      id: "update",
+      title: "Update Existing Policy",
+      icon: <Edit className="w-6 h-6" />,
+      path: "/admin/manage-policies/update", // ✅ correct path
+    },
+    {
+      id: "remove",
+      title: "Remove Policy",
+      icon: <Trash2 className="w-6 h-6" />,
+      path: "/admin/manage-policies/remove", // ✅ correct path
+    },
+    {
+      id: "view",
+      title: "View All Policies",
+      icon: <Eye className="w-6 h-6" />,
+      path: "/admin/manage-policies/view", // ✅ correct path
+    },
   ];
 
   return (
@@ -75,20 +97,31 @@ export default function ManagePolicies() {
               </button>
             </div>
             <p className="text-gray-600 mb-10">
-              Manage all <span className="font-semibold text-green-700">{selectedType.title}</span> policies — add, update, remove, or view existing ones.
+              Manage all{" "}
+              <span className="font-semibold text-green-700">{selectedType.title}</span> policies — add, update, remove, or view existing ones.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {managementOptions.map((option) => (
                 <button
                   key={option.id}
-                  onClick={() => alert(`${option.title} feature coming soon!`)}
+                  onClick={() => navigate(option.path)} // ✅ navigate to correct route
                   className="flex flex-col items-center justify-center p-8 border border-green-200 rounded-xl shadow-md hover:shadow-lg hover:border-green-400 transition-all bg-green-50 hover:bg-green-100"
                 >
                   <div className="mb-4 text-green-600">{option.icon}</div>
                   <span className="font-semibold text-green-800">{option.title}</span>
                 </button>
               ))}
+            </div>
+
+            {/* ✅ Back to Dashboard Button */}
+            <div className="mt-10 flex justify-center">
+              <button
+                onClick={() => navigate("/admin/dashboard")}
+                className="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg font-medium shadow-md hover:bg-green-700 transition-all"
+              >
+                <LayoutDashboard className="w-5 h-5" /> Back to Dashboard
+              </button>
             </div>
           </div>
         </>

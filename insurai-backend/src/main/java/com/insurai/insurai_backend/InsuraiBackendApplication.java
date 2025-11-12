@@ -13,5 +13,3 @@ public class InsuraiBackendApplication {
 }
 
 
-//console - $2a$10$0./sEkT1tcvePL6aIJM.IeTKdeeBgsi6QuriFImxDATiQoymZZqHC
-// db -     $2a$10$cmuxP/LpJ.eQZmz/4.SG4uBPISCY6ihl0YZcArN5/ERTjxRoeYowG
