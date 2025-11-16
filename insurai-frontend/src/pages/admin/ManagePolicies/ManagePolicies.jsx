@@ -1,131 +1,122 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PlusCircle, Edit, Trash2, Eye, ShieldCheck, ArrowLeft, LayoutDashboard } from "lucide-react";
+import { motion } from "framer-motion";
+import { HeartPulse, Heart, Shield, Briefcase } from "lucide-react";
 
 export default function ManagePolicies() {
-  const [selectedType, setSelectedType] = useState(null);
   const navigate = useNavigate();
 
-  const policyTypes = [
+  // We can add icons, descriptions, and color classes to your array
+  const cards = [
     {
-      id: "health",
       title: "Health Insurance",
-      description: "Covers medical expenses and hospital stays.",
-      color: "from-green-400 to-green-600",
+      slug: "health-insurance",
+      icon: HeartPulse,
+      description: "Manage medical, dental, and wellness policies.",
+      textColor: "text-green-700",
+      ringColor: "hover:ring-green-500",
+      shadowColor: "hover:shadow-green-100",
     },
     {
-      id: "life",
       title: "Life Insurance",
-      description: "Provides financial support to family after policyholder’s demise.",
-      color: "from-blue-400 to-blue-600",
+      slug: "life-insurance",
+      icon: Heart,
+      description: "Manage term, whole, and endowment policies.",
+      textColor: "text-blue-700",
+      ringColor: "hover:ring-blue-500",
+      shadowColor: "hover:shadow-blue-100",
     },
     {
-      id: "property",
       title: "Property & Casualty",
-      description: "Covers damage or loss to property due to accidents or disasters.",
-      color: "from-yellow-400 to-yellow-600",
+      slug: "property-casualty",
+      icon: Shield,
+      description: "Manage home, auto, and liability policies.",
+      textColor: "text-amber-700",
+      ringColor: "hover:ring-amber-500",
+      shadowColor: "hover:shadow-amber-100",
     },
     {
-      id: "commercial",
       title: "Commercial Insurance",
-      description: "Protects businesses from potential losses or liability.",
-      color: "from-purple-400 to-purple-600",
+      slug: "commercial-insurance",
+      icon: Briefcase,
+      description: "Manage business risk and corporate policies.",
+      textColor: "text-purple-700",
+      ringColor: "hover:ring-purple-500",
+      shadowColor: "hover:shadow-purple-100",
     },
   ];
 
-  const managementOptions = [
-    {
-      id: "add",
-      title: "Add New Policy",
-      icon: <PlusCircle className="w-6 h-6" />,
-      path: "/admin/manage-policies/add", // ✅ correct path
-    },
-    {
-      id: "update",
-      title: "Update Existing Policy",
-      icon: <Edit className="w-6 h-6" />,
-      path: "/admin/manage-policies/update", // ✅ correct path
-    },
-    {
-      id: "remove",
-      title: "Remove Policy",
-      icon: <Trash2 className="w-6 h-6" />,
-      path: "/admin/manage-policies/remove", // ✅ correct path
-    },
-    {
-      id: "view",
-      title: "View All Policies",
-      icon: <Eye className="w-6 h-6" />,
-      path: "/admin/manage-policies/view", // ✅ correct path
-    },
-  ];
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.1, // Stagger effect
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    }),
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 p-10">
-      <h1 className="text-4xl font-bold text-green-800 mb-10 text-center">
-        Manage Insurance Policies
-      </h1>
+    // Switched to a more neutral background to let the card colors pop
+    <div className="min-h-screen p-10 bg-slate-50">
+      
+      {/* Centered title container */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center mb-12"
+      >
+        <h1 className="text-5xl font-bold text-gray-800 mb-3">
+          Policy Management
+        </h1>
+        <p className="text-lg text-gray-600">
+          Select a category to add, view, update, or remove policies.
+        </p>
+      </motion.div>
 
-      {!selectedType ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-          {policyTypes.map((type) => (
-            <div
-              key={type.id}
-              onClick={() => setSelectedType(type)}
-              className={`p-8 rounded-2xl shadow-lg bg-gradient-to-br ${type.color} text-white cursor-pointer transform transition-all hover:scale-105 hover:shadow-2xl`}
-            >
-              <div className="flex items-center justify-center mb-4">
-                <ShieldCheck className="w-12 h-12" />
-              </div>
-              <h3 className="text-2xl font-semibold mb-2 text-center">{type.title}</h3>
-              <p className="text-sm text-center opacity-90">{type.description}</p>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <>
-          <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-xl">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl font-bold text-green-700">
-                {selectedType.title} Management
-              </h2>
-              <button
-                onClick={() => setSelectedType(null)}
-                className="text-sm bg-green-100 text-green-700 px-4 py-2 rounded-lg hover:bg-green-200 transition"
-              >
-                ← Back
-              </button>
-            </div>
-            <p className="text-gray-600 mb-10">
-              Manage all{" "}
-              <span className="font-semibold text-green-700">{selectedType.title}</span> policies — add, update, remove, or view existing ones.
+      {/* A wider grid that is 2-col on medium and 4-col on large screens */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        
+        {cards.map((c, index) => (
+          <motion.div
+            key={c.slug}
+            custom={index}
+            initial="hidden"
+            animate="visible"
+            variants={cardVariants}
+            
+            onClick={() => navigate(`/admin/manage-policies/${c.slug}`)}
+            
+            // Card Styling
+            className={`
+              cursor-pointer bg-white rounded-2xl shadow-lg 
+              hover:shadow-2xl ${c.shadowColor} 
+              hover:scale-105 
+              ring-4 ring-transparent ${c.ringColor}
+              transition-all duration-300 ease-in-out 
+              flex flex-col justify-start p-8 group
+            `}
+          >
+            {/* Icon */}
+            <c.icon 
+              className={`w-16 h-16 mb-5 ${c.textColor} transition-transform duration-300 group-hover:scale-110`} 
+            />
+            
+            {/* Title */}
+            <h2 className={`text-2xl font-bold ${c.textColor} mb-3`}>
+              {c.title}
+            </h2>
+            
+            {/* Description */}
+            <p className="text-gray-600 text-base">
+              {c.description}
             </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {managementOptions.map((option) => (
-                <button
-                  key={option.id}
-                  onClick={() => navigate(option.path)} // ✅ navigate to correct route
-                  className="flex flex-col items-center justify-center p-8 border border-green-200 rounded-xl shadow-md hover:shadow-lg hover:border-green-400 transition-all bg-green-50 hover:bg-green-100"
-                >
-                  <div className="mb-4 text-green-600">{option.icon}</div>
-                  <span className="font-semibold text-green-800">{option.title}</span>
-                </button>
-              ))}
-            </div>
-
-            {/* ✅ Back to Dashboard Button */}
-            <div className="mt-10 flex justify-center">
-              <button
-                onClick={() => navigate("/admin/dashboard")}
-                className="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg font-medium shadow-md hover:bg-green-700 transition-all"
-              >
-                <LayoutDashboard className="w-5 h-5" /> Back to Dashboard
-              </button>
-            </div>
-          </div>
-        </>
-      )}
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,53 +1,96 @@
 package com.insurai.insurai_backend.service;
 
+import com.insurai.insurai_backend.dto.UpdateOrDeletePolicyRequest;
 import com.insurai.insurai_backend.entity.Policy;
+import com.insurai.insurai_backend.entity.UserDetails;
 import com.insurai.insurai_backend.repository.PolicyRepository;
+import com.insurai.insurai_backend.repository.UserDetailsRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PolicyService {
 
-    @Autowired
-    private PolicyRepository policyRepository;
+    private final PolicyRepository policyRepository;
+    private final UserDetailsRepository userRepo;
+    private final PasswordEncoder passwordEncoder;
 
-    // Create a new policy
-    public Policy createPolicy(Policy policy) {
-        return policyRepository.save(policy);
+    // ----------------------------------
+    // GET ALL POLICIES BY TYPE
+    // ----------------------------------
+    public List<Policy> getPoliciesByType(String type) {
+        return policyRepository.findByPolicyTypeIgnoreCase(type);
     }
 
-    // Get all policies
+    // ----------------------------------
+    // GET ALL POLICIES
+    // ----------------------------------
     public List<Policy> getAllPolicies() {
         return policyRepository.findAll();
     }
 
-    // Get one policy by ID
-    public Policy getPolicyById(Long id) {
-        return policyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Policy not found with ID: " + id));
+    // ----------------------------------
+    // ADD POLICY
+    // ----------------------------------
+    public Policy addPolicy(Policy policy) {
+        return policyRepository.save(policy);
     }
 
-    // Update a policy
-    public Policy updatePolicy(Long id, Policy updatedPolicy) {
-        Policy existing = getPolicyById(id);
-        existing.setPolicyName(updatedPolicy.getPolicyName());
-        existing.setPolicyType(updatedPolicy.getPolicyType());
-        existing.setDescription(updatedPolicy.getDescription());
-        existing.setPremiumAmount(updatedPolicy.getPremiumAmount());
-        existing.setCoverageAmount(updatedPolicy.getCoverageAmount());
-        existing.setDuration(updatedPolicy.getDuration());
-        existing.setCriteria(updatedPolicy.getCriteria());
-        existing.setStatus(updatedPolicy.getStatus());
-        return policyRepository.save(existing);
+
+    // ----------------------------------
+    // VERIFY ADMIN PASSWORD
+    // ----------------------------------
+    private boolean verifyAdmin(String rawPassword) {
+        UserDetails admin = userRepo.findByRole("ADMIN")
+                .orElseThrow(() -> new RuntimeException("Admin account not found!"));
+
+        return passwordEncoder.matches(rawPassword, admin.getPassword());
     }
 
-    // Delete a policy
-    public void deletePolicy(Long id) {
-        if (!policyRepository.existsById(id)) {
-            throw new RuntimeException("Policy not found with ID: " + id);
+
+    // ----------------------------------
+    // UPDATE POLICY
+    // ----------------------------------
+    public Policy updatePolicy(UpdateOrDeletePolicyRequest req) {
+
+        if (!verifyAdmin(req.getAdminPassword())) {
+            throw new RuntimeException("Admin password is incorrect!");
         }
-        policyRepository.deleteById(id);
+
+        Policy policy = policyRepository.findById(req.getPolicyId())
+                .orElseThrow(() -> new RuntimeException("Policy not found"));
+
+        if (req.getPolicyName() != null) policy.setPolicyName(req.getPolicyName());
+        if (req.getDescription() != null) policy.setDescription(req.getDescription());
+        if (req.getPremiumAmount() != null) policy.setPremiumAmount(req.getPremiumAmount());
+        if (req.getCoverageAmount() != null) policy.setCoverageAmount(req.getCoverageAmount());
+        if (req.getDuration() != null) policy.setDuration(req.getDuration());
+        if (req.getCriteria() != null) policy.setCriteria(req.getCriteria());
+        if (req.getStatus() != null) policy.setStatus(req.getStatus());
+
+        return policyRepository.save(policy);
+    }
+
+
+    // ----------------------------------
+    // DELETE POLICY
+    // ----------------------------------
+    public String deletePolicy(UpdateOrDeletePolicyRequest req) {
+
+        if (!verifyAdmin(req.getAdminPassword())) {
+            throw new RuntimeException("Admin password is incorrect!");
+        }
+
+        Policy policy = policyRepository.findById(req.getPolicyId())
+                .orElseThrow(() -> new RuntimeException("Policy not found"));
+
+        policyRepository.delete(policy);
+        return "Policy deleted successfully!";
     }
 }

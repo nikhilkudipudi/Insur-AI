@@ -20,14 +20,14 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
   e.preventDefault();
-  setLoading(true);
+  // setLoading(true);
 
   try {
     const res = await login(formData);
 
     if (!res.ok) {
       alert(res.data || "Invalid credentials! Please try again.");
-        setLoading(false);
+        // setLoading(false);
       return;
     }
 
@@ -53,9 +53,9 @@ export default function Login() {
     console.error("Login error:", error);
     alert("Something went wrong during login.");
   }
-  finally {
-      setLoading(false);
-    }
+  // finally {
+  //     setLoading(false);
+  //   }
 };
 
   return (

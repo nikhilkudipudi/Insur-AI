@@ -1,170 +1,93 @@
+// src/pages/admin/ManagePolicies/AddNewPolicy.jsx
 import { useState } from "react";
+import { motion } from "framer-motion";
+import { PlusCircle, FileText, DollarSign, Calendar, Layers } from "lucide-react";
+import { addPolicy } from "../../../api/authService";
+import { usePolicyType } from "../../../hooks/usePolicyType";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle, ArrowLeftCircle } from "lucide-react";
 
 export default function AddNewPolicy() {
+  const { policyType, segment } = usePolicyType();
   const navigate = useNavigate();
-  const [policyData, setPolicyData] = useState({
-    type: "",
-    name: "",
-    term: "",
-    premium: "",
-    coverage: "",
+
+  const [form, setForm] = useState({
+    policyName: "",
     description: "",
-    eligibility: "",
+    premiumAmount: "",
+    coverageAmount: "",
+    duration: "",
+    criteria: "",
+    status: "ACTIVE",
   });
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setPolicyData({ ...policyData, [name]: value });
-  };
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = () => {
-    if (
-      !policyData.type ||
-      !policyData.name ||
-      !policyData.term ||
-      !policyData.premium ||
-      !policyData.coverage
-    ) {
-      alert("⚠️ Please fill all required fields before saving.");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!policyType || !segment) {
+      alert("Invalid policy category (URL).");
       return;
     }
 
-    console.log("✅ New Policy Data:", policyData);
-    alert("🎉 Policy saved successfully!");
-    navigate("/admin/manage-policies");
+    setLoading(true);
+    const payload = {
+      ...form,
+      premiumAmount: Number(form.premiumAmount || 0),
+      coverageAmount: Number(form.coverageAmount || 0),
+      policyType, // canonical uppercase like "HEALTH"
+    };
+
+    const res = await addPolicy(payload);
+    setLoading(false);
+
+    if (res.ok) {
+      alert("Policy added successfully.");
+      // navigate back to view for that category
+      navigate(`/admin/manage-policies/${segment}/view`);
+    } else {
+      alert("Failed to add policy: " + (res.data || "Unknown error"));
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 flex flex-col items-center py-12">
-      <div className="w-full max-w-5xl bg-white/70 backdrop-blur-md shadow-2xl rounded-2xl p-10 border border-green-100">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-green-800">
-            📝 Create a New Insurance Policy
-          </h1>
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 bg-green-600 text-white px-5 py-2 rounded-lg shadow hover:bg-green-700 transition"
-          >
-            <ArrowLeftCircle className="w-5 h-5" /> Back
-          </button>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 p-10">
+      <motion.h1 initial={{opacity:0,y:-10}} animate={{opacity:1,y:0}} className="text-4xl font-bold text-green-700 mb-8 flex items-center gap-3">
+        <PlusCircle className="w-10 h-10 text-green-600" />
+        Add New {policyType ?? "Policy"}
+      </motion.h1>
+
+      <motion.form onSubmit={handleSubmit} initial={{opacity:0,scale:0.98}} animate={{opacity:1,scale:1}} className="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-xl space-y-5 border border-green-200">
+        <div className="relative">
+          <FileText className="absolute left-3 top-3 text-green-600" />
+          <input name="policyName" value={form.policyName} onChange={handleChange} placeholder="Policy Name" required className="w-full pl-10 border p-3 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" />
         </div>
 
-        {/* Form */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-         
-          {/* Policy Name */}
-          <div>
-            <label className="block text-sm font-semibold text-green-800 mb-2">
-              Policy Name *
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={policyData.name}
-              onChange={handleChange}
-              placeholder="e.g., InsurAI Secure Life Plan"
-              className="w-full border border-green-300 rounded-lg p-3 focus:ring-2 focus:ring-green-500 outline-none"
-            />
+        <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" rows={3} className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" />
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="relative">
+            <DollarSign className="absolute left-3 top-3 text-green-600" />
+            <input type="number" name="premiumAmount" value={form.premiumAmount} onChange={handleChange} placeholder="Premium Amount" className="w-full pl-10 border p-3 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" />
           </div>
 
-          {/* Term Duration */}
-          <div>
-            <label className="block text-sm font-semibold text-green-800 mb-2">
-              Term Plan Duration *
-            </label>
-            <select
-              name="term"
-              value={policyData.term}
-              onChange={handleChange}
-              className="w-full border border-green-300 rounded-lg p-3 focus:ring-2 focus:ring-green-500 outline-none"
-            >
-              <option value="">Select Term</option>
-              <option value="5 years">5 Years</option>
-              <option value="10 years">10 Years</option>
-              <option value="15 years">15 Years</option>
-              <option value="20 years">20 Years</option>
-              <option value="30 years">30 Years</option>
-            </select>
-          </div>
-
-          {/* Premium Amount */}
-          <div>
-            <label className="block text-sm font-semibold text-green-800 mb-2">
-              Premium Amount (₹) *
-            </label>
-            <input
-              type="number"
-              name="premium"
-              value={policyData.premium}
-              onChange={handleChange}
-              placeholder="e.g., 1500"
-              className="w-full border border-green-300 rounded-lg p-3 focus:ring-2 focus:ring-green-500 outline-none"
-            />
-          </div>
-
-          {/* Coverage Amount */}
-          <div>
-            <label className="block text-sm font-semibold text-green-800 mb-2">
-              Coverage Amount (₹) *
-            </label>
-            <input
-              type="number"
-              name="coverage"
-              value={policyData.coverage}
-              onChange={handleChange}
-              placeholder="e.g., 5,00,000"
-              className="w-full border border-green-300 rounded-lg p-3 focus:ring-2 focus:ring-green-500 outline-none"
-            />
+          <div className="relative">
+            <Layers className="absolute left-3 top-3 text-green-600" />
+            <input type="number" name="coverageAmount" value={form.coverageAmount} onChange={handleChange} placeholder="Coverage Amount" className="w-full pl-10 border p-3 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" />
           </div>
         </div>
 
-        {/* Description */}
-        <div className="mt-8">
-          <label className="block text-sm font-semibold text-green-800 mb-2">
-            Policy Description
-          </label>
-          <textarea
-            name="description"
-            value={policyData.description}
-            onChange={handleChange}
-            placeholder="Describe the key features and benefits of this policy..."
-            className="w-full h-32 border border-green-300 rounded-lg p-4 text-gray-700 focus:ring-2 focus:ring-green-500 outline-none"
-          ></textarea>
+        <div className="relative">
+          <Calendar className="absolute left-3 top-3 text-green-600" />
+          <input name="duration" value={form.duration} onChange={handleChange} placeholder="Duration (e.g. 10 Years)" className="w-full pl-10 border p-3 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" />
         </div>
 
-        {/* Eligibility */}
-        <div className="mt-8">
-          <label className="block text-sm font-semibold text-green-800 mb-2">
-            Eligibility Criteria
-          </label>
-          <textarea
-            name="eligibility"
-            value={policyData.eligibility}
-            onChange={handleChange}
-            placeholder="Mention eligibility age, medical conditions, etc..."
-            className="w-full h-32 border border-green-300 rounded-lg p-4 text-gray-700 focus:ring-2 focus:ring-green-500 outline-none"
-          ></textarea>
-        </div>
+        <input name="criteria" value={form.criteria} onChange={handleChange} placeholder="Eligibility criteria" className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" />
 
-        {/* Buttons */}
-        <div className="flex justify-end gap-4 mt-10">
-          <button
-            onClick={() => navigate(-1)}
-            className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-md"
-          >
-            <CheckCircle className="w-5 h-5" /> Save Policy
-          </button>
-        </div>
-      </div>
+        <motion.button whileTap={{scale:0.98}} whileHover={{scale:1.02}} type="submit" disabled={loading} className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold shadow hover:bg-green-700 transition">
+          {loading ? "Creating..." : "Create Policy"}
+        </motion.button>
+      </motion.form>
     </div>
   );
 }

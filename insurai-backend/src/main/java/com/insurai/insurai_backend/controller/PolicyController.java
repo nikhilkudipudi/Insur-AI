@@ -1,74 +1,61 @@
 package com.insurai.insurai_backend.controller;
 
-import com.insurai.insurai_backend.dto.PasswordRequest;
-import com.insurai.insurai_backend.dto.UpdatePolicyRequest;
+
+import com.insurai.insurai_backend.dto.UpdateOrDeletePolicyRequest;
 import com.insurai.insurai_backend.entity.Policy;
-import com.insurai.insurai_backend.entity.UserDetails;
-import com.insurai.insurai_backend.repository.UserDetailsRepository;
-import com.insurai.insurai_backend.security.JWTUtil;
 import com.insurai.insurai_backend.service.PolicyService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin/manage-policies")
+@RequestMapping("/api/admin/policies")
+@RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class PolicyController {
 
-    @Autowired
-    private PolicyService policyService;
+    private final PolicyService policyService;
 
-    @Autowired
-    private UserDetailsRepository userDetailsRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JWTUtil jwtUtil;
-
-    // ✅ Create
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/add")
-    public ResponseEntity<Policy> createPolicy(@RequestBody Policy policy) {
-        return ResponseEntity.ok(policyService.createPolicy(policy));
+    // ---------------------------
+    // GET POLICIES BY TYPE
+    // ---------------------------
+    @GetMapping("/type/{policyType}")
+    public ResponseEntity<List<Policy>> getByType(@PathVariable String policyType) {
+        return ResponseEntity.ok(policyService.getPoliciesByType(policyType.toUpperCase()));
     }
 
-    // ✅ View all
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/view")
-    public ResponseEntity<List<Policy>> getAllPolicies() {
+    // ---------------------------
+    // GET ALL POLICIES
+    // ---------------------------
+    @GetMapping("/all")
+    public ResponseEntity<List<Policy>> getAll() {
         return ResponseEntity.ok(policyService.getAllPolicies());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Policy> updatePolicy(@PathVariable Long id, @RequestBody Policy policy) {
-        return ResponseEntity.ok(policyService.updatePolicy(id, policy));
+
+    // ---------------------------
+    // ADD NEW POLICY
+    // ---------------------------
+    @PostMapping("/add")
+    public ResponseEntity<?> addPolicy(@RequestBody Policy policy) {
+        return ResponseEntity.ok(policyService.addPolicy(policy));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/remove/{id}")
-    public ResponseEntity<String> deletePolicy(@PathVariable Long id) {
-        policyService.deletePolicy(id);
-        return ResponseEntity.ok("Policy deleted successfully!");
+    // ---------------------------
+    // UPDATE POLICY (ADMIN PASSWORD REQUIRED)
+    // ---------------------------
+    @PutMapping("/update")
+    public ResponseEntity<?> updatePolicy(@RequestBody UpdateOrDeletePolicyRequest req) {
+        return ResponseEntity.ok(policyService.updatePolicy(req));
     }
 
-
-
-
-    // Utility to extract Bearer token
-    private String extractToken(HttpServletRequest request) {
-        String header = request.getHeader("Authorization");
-        if (header != null && header.startsWith("Bearer ")) {
-            return header.substring(7);
-        }
-        return null;
+    // ---------------------------
+    // DELETE POLICY (ADMIN PASSWORD REQUIRED)
+    // ---------------------------
+    @PostMapping("/delete")
+    public ResponseEntity<?> deletePolicy(@RequestBody UpdateOrDeletePolicyRequest req) {
+        return ResponseEntity.ok(policyService.deletePolicy(req));
     }
 }

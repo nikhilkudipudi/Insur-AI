@@ -1,211 +1,157 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Edit, Lock, XCircle } from "lucide-react";
+import { getPoliciesByType, updatePolicy } from "../../../api/authService";
+import { usePolicyType } from "../../../hooks/usePolicyType";
 
 export default function UpdatePolicy() {
-  const [policies, setPolicies] = useState([
-    {
-      id: 1,
-      name: "InsurAI Life Secure Plan",
-      type: "Life Insurance",
-      term: "15 Years",
-      premium: "₹1,500/month",
-      coverage: "₹10,00,000",
-    },
-    {
-      id: 2,
-      name: "Health Protect Elite",
-      type: "Health Insurance",
-      term: "10 Years",
-      premium: "₹1,200/month",
-      coverage: "₹5,00,000",
-    },
-    {
-      id: 3,
-      name: "Property Shield Max",
-      type: "Property & Casualty",
-      term: "20 Years",
-      premium: "₹1,800/month",
-      coverage: "₹20,00,000",
-    },
-  ]);
+  const { policyType } = usePolicyType();
+  const [policies, setPolicies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [selectedPolicy, setSelectedPolicy] = useState(null);
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [selected, setSelected] = useState(null);
+  const [adminPassword, setAdminPassword] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [editModel, setEditModel] = useState(null);
+  const [saving, setSaving] = useState(false);
 
-  const handleEditClick = (policy) => {
-    setSelectedPolicy(policy);
-    setShowPasswordModal(true);
-    setError("");
-    setPassword("");
+  useEffect(() => {
+    if (!policyType) return;
+    (async () => {
+      setLoading(true);
+      const res = await getPoliciesByType(policyType);
+      setLoading(false);
+      if (res.ok) setPolicies(Array.isArray(res.data) ? res.data : []);
+      else setPolicies([]);
+    })();
+  }, [policyType]);
+
+  const openVerify = (policy) => {
+    setSelected(policy);
+    setAdminPassword("");
+    setShowModal(true);
   };
 
-  const confirmAccess = () => {
-    if (password !== "admin123") {
-      setError("❌ Incorrect password. Please try again.");
-      return;
+  const verify = () => {
+    if (!adminPassword) { alert("Enter admin password"); return; }
+    setShowModal(false);
+    setEditModel({ ...selected });
+    setEditing(true);
+  };
+
+  const handleChangeLocal = (field, value) => setEditModel(prev => ({ ...prev, [field]: value }));
+
+  const save = async () => {
+    if (!editModel) return;
+    setSaving(true);
+    
+    // ==================
+    // 💡 THE FIX IS HERE
+    // ==================
+    // The backend DTO (UpdateOrDeletePolicyRequest) expects a flat object,
+    // not a nested 'updatedPolicy' object. We must send the fields at the
+    // top level along with the policyId and adminPassword.
+
+    const payload = {
+      policyId: editModel.id,
+      adminPassword,
+
+      // 👇 These fields are now flat (not nested)
+      policyName: editModel.policyName,
+      description: editModel.description,
+      premiumAmount: Number(editModel.premiumAmount || 0),
+      coverageAmount: Number(editModel.coverageAmount || 0),
+      duration: editModel.duration,
+      criteria: editModel.criteria,
+      status: editModel.status || "ACTIVE",
+    };
+    // ==================
+    // END OF FIX
+    // ==================
+
+    const res = await updatePolicy(payload);
+    setSaving(false);
+    if (res.ok) {
+      // re-fetch updated list from server to ensure sync
+      const fresh = await getPoliciesByType(policyType);
+      if (fresh.ok) setPolicies(Array.isArray(fresh.data) ? fresh.data : []);
+      setEditing(false);
+      setEditModel(null);
+      setSelected(null);
+      alert("Policy updated.");
+    } else {
+      alert(res.data || "Update failed.");
     }
-    setShowPasswordModal(false);
-  };
-
-  const handleUpdateChange = (field, value) => {
-    setSelectedPolicy({ ...selectedPolicy, [field]: value });
-  };
-
-  const handleSave = () => {
-    setPolicies((prev) =>
-      prev.map((p) => (p.id === selectedPolicy.id ? selectedPolicy : p))
-    );
-    alert("✅ Policy updated successfully!");
-    setSelectedPolicy(null);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 p-10">
-      <h1 className="text-4xl font-bold text-green-800 mb-10 text-center">
-        Update Existing Policies
-      </h1>
+    <div className="min-h-screen p-10 bg-gradient-to-br from-green-50 via-white to-green-100">
+      <div className="max-w-6xl mx-auto bg-white p-6 rounded-2xl shadow border border-green-100">
+        <h2 className="text-2xl font-bold text-green-700 mb-4">Update {policyType} Policies</h2>
 
-      <div className="max-w-6xl mx-auto bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left">
-            <thead>
-              <tr className="bg-green-100 text-green-800">
-                <th className="p-4 font-semibold">Policy Name</th>
-                <th className="p-4 font-semibold">Type</th>
-                <th className="p-4 font-semibold">Term</th>
-                <th className="p-4 font-semibold">Premium</th>
-                <th className="p-4 font-semibold">Coverage</th>
-                <th className="p-4 font-semibold text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {policies.map((policy) => (
-                <tr
-                  key={policy.id}
-                  className="border-b hover:bg-green-50 transition-all"
-                >
-                  <td className="p-4">{policy.name}</td>
-                  <td className="p-4">{policy.type}</td>
-                  <td className="p-4">{policy.term}</td>
-                  <td className="p-4">{policy.premium}</td>
-                  <td className="p-4">{policy.coverage}</td>
-                  <td className="p-4 text-center">
-                    <button
-                      onClick={() => handleEditClick(policy)}
-                      className="flex items-center gap-2 mx-auto text-green-600 hover:text-green-700 transition-all"
-                    >
-                      <Edit className="w-5 h-5" /> Edit
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {loading ? <p className="text-gray-600">Loading...</p> : (
+          policies.length === 0 ? <p className="text-gray-600">No policies found.</p> : (
+            <table className="w-full">
+              <thead className="bg-green-100 text-green-700"><tr><th className="p-3">Name</th><th className="p-3">Premium</th><th className="p-3">Action</th></tr></thead>
+              <tbody>
+                {policies.map(p => (
+                  <tr key={p.id} className="border-b hover:bg-green-50">
+                    <td className="p-3">{p.policyName}</td>
+                    <td className="p-3">₹{p.premiumAmount}</td>
+                    <td className="p-3">
+                      <button onClick={() => openVerify(p)} className="inline-flex items-center gap-2 text-green-600 hover:text-green-800"><Edit className="w-4 h-4" /> Edit</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )
+        )}
       </div>
 
-      {/* Floating Password Modal */}
-      {showPasswordModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+      {/* password modal */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
           <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md relative">
-            <button
-              onClick={() => setShowPasswordModal(false)}
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
-            >
-              <XCircle className="w-6 h-6" />
-            </button>
-
+            <button onClick={() => setShowModal(false)} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"><XCircle className="w-6 h-6"/></button>
             <div className="flex flex-col items-center text-center">
               <Lock className="w-10 h-10 text-green-700 mb-3" />
-              <h2 className="text-2xl font-bold text-green-800 mb-2">
-                Admin Verification
-              </h2>
-              <p className="text-gray-600 mb-6">
-                Enter admin password to edit{" "}
-                <span className="font-semibold text-green-700">
-                  {selectedPolicy?.name}
-                </span>
-              </p>
-
-              <input
-                type="password"
-                placeholder="Enter admin password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-green-300 rounded-lg p-3 text-gray-700 focus:ring-2 focus:ring-green-500 outline-none"
-              />
-
-              {error && <p className="text-red-600 mt-3 text-sm">{error}</p>}
-
-              <div className="flex justify-end gap-4 mt-6 w-full">
-                <button
-                  onClick={() => setShowPasswordModal(false)}
-                  className="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmAccess}
-                  className="px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-md"
-                >
-                  Verify
-                </button>
+              <h2 className="text-2xl font-bold text-green-800 mb-2">Confirm Admin Identity</h2>
+              <p className="text-gray-600 mb-6">Enter admin password to edit <span className="font-semibold text-green-700">{selected?.policyName}</span></p>
+              <input type="password" value={adminPassword} onChange={(e)=>setAdminPassword(e.target.value)} className="w-full border border-green-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-green-500" />
+              <div className="flex justify-end gap-3 mt-6 w-full">
+                <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
+                <button onClick={verify} className="px-4 py-2 bg-green-600 text-white rounded-lg">Verify</button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Editable Form (after verification) */}
-      {selectedPolicy && !showPasswordModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
-          <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-lg">
-            <h2 className="text-2xl font-bold text-green-700 mb-4">
-              Edit Policy Details
-            </h2>
-
-            <div className="space-y-4">
-              <input
-                value={selectedPolicy.name}
-                onChange={(e) => handleUpdateChange("name", e.target.value)}
-                className="w-full border border-green-300 p-3 rounded-lg"
-                placeholder="Policy Name"
-              />
-              <input
-                value={selectedPolicy.term}
-                onChange={(e) => handleUpdateChange("term", e.target.value)}
-                className="w-full border border-green-300 p-3 rounded-lg"
-                placeholder="Term"
-              />
-              <input
-                value={selectedPolicy.premium}
-                onChange={(e) => handleUpdateChange("premium", e.target.value)}
-                className="w-full border border-green-300 p-3 rounded-lg"
-                placeholder="Premium"
-              />
-              <input
-                value={selectedPolicy.coverage}
-                onChange={(e) => handleUpdateChange("coverage", e.target.value)}
-                className="w-full border border-green-300 p-3 rounded-lg"
-                placeholder="Coverage"
-              />
+      {/* editing modal */}
+      {editing && editModel && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 overflow-y-auto p-4">
+          <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-xl relative">
+            <button onClick={() => { setEditing(false); setEditModel(null); }} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"><XCircle className="w-6 h-6"/></button>
+            <h3 className="text-2xl font-bold text-green-700 mb-4">Edit Policy</h3>
+            <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-2">
+              <input value={editModel.policyName} onChange={(e)=>handleChangeLocal("policyName", e.target.value)} className="w-full border p-3 rounded-lg" placeholder="Policy name" />
+              <textarea value={editModel.description||""} onChange={(e)=>handleChangeLocal("description", e.target.value)} className="w-full border p-3 rounded-lg" placeholder="Description" rows={4}/>
+              <div className="grid grid-cols-2 gap-3">
+                <input type="number" value={editModel.premiumAmount||0} onChange={(e)=>handleChangeLocal("premiumAmount", e.target.value)} className="border p-3 rounded-lg" placeholder="Premium" />
+                <input type="number" value={editModel.coverageAmount||0} onChange={(e)=>handleChangeLocal("coverageAmount", e.target.value)} className="border p-3 rounded-lg" placeholder="Coverage" />
+              </div>
+              <input value={editModel.duration||""} onChange={(e)=>handleChangeLocal("duration", e.target.value)} className="w-full border p-3 rounded-lg" placeholder="Duration (e.g., 10 Years)" />
+              <textarea value={editModel.criteria||""} onChange={(e)=>handleChangeLocal("criteria", e.target.value)} className="w-full border p-3 rounded-lg" placeholder="Criteria" rows={3}/>
+              <select value={editModel.status||"ACTIVE"} onChange={(e)=>handleChangeLocal("status", e.target.value)} className="w-full border p-3 rounded-lg">
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="INACTIVE">INACTIVE</option>
+              </select>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button
-                onClick={() => setSelectedPolicy(null)}
-                className="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                className="px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-md"
-              >
-                Save Changes
-              </button>
+              <button onClick={() => { setEditing(false); setEditModel(null); }} className="px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
+              <button onClick={save} disabled={saving} className="px-4 py-2 bg-green-600 text-white rounded-lg">{saving ? "Saving..." : "Save Changes"}</button>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+
 import { Eye, EyeOff, UserPlus } from "lucide-react";
 import SignUp from "../assets/SignUp.gif";
 import { signup } from "../api/authService";
@@ -26,7 +26,7 @@ export default function Signup() {
   e.preventDefault();
 
   try {
-    const { ok, data } = await axios.post("http://localhost:8080/api/auth/signup", {
+    const { ok, data } = await signup({
       fullName: formData.fullName,
       email: formData.email,
       password: formData.password,

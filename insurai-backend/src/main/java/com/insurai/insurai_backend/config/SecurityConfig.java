@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.Arrays; // Import Arrays
 
 @EnableWebSecurity
 @Configuration
@@ -41,9 +42,12 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/").permitAll()
-                        //  .requestMatchers("/api/admin/").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.OPTIONS, "/").permitAll()
+                        // Allow all OPTIONS requests (preflights) to pass through
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // Allow all paths under /api/auth/ (e.g., signup, login) to be accessed without authentication
+                        .requestMatchers("/api/auth/**").permitAll()// <-- CORRECTED LINE
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // All other requests require authentication
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -60,9 +64,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
-
     }
-
 
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
@@ -74,26 +76,19 @@ public class SecurityConfig {
 
         // List all origins your frontend will be served from.
         // IMPORTANT: For production, replace localhost with your actual frontend domain(s).
-        config.addAllowedOrigin("http://localhost:5173"); // Your Vite development server
-        config.addAllowedOrigin("http://34.83.226.35/");
-        config.addAllowedOrigin("http://devbridge.ddns.net/");
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://34.83.226.35/", "http://devbridge.ddns.net/"));
 
         // Allow all common HTTP methods
-        config.addAllowedMethod("GET");
-        config.addAllowedMethod("POST");
-        config.addAllowedMethod("PUT");
-        config.addAllowedMethod("DELETE");
-        config.addAllowedMethod("OPTIONS"); // Crucial for pre-flight requests
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
         // Allow all headers (e.g., Content-Type, Authorization, Custom-Header)
-        config.addAllowedHeader("*");
+        config.setAllowedHeaders(Arrays.asList("*"));
 
         // How long the pre-flight request's result can be cached by the browser (in seconds)
         config.setMaxAge(3600L); // 1 hour
 
-        // Apply this CORS configuration to all paths (/)
-        // Note: Changed "/" to "/" to ensure it covers all your API endpoints
-        source.registerCorsConfiguration("/", config);
+        // Apply this CORS configuration to all paths (/**)
+        source.registerCorsConfiguration("/**", config);
         return source;
     }
 }
