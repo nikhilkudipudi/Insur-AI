@@ -6,10 +6,8 @@ import com.insurai.insurai_backend.entity.UserDetails;
 import com.insurai.insurai_backend.repository.PolicyRepository;
 import com.insurai.insurai_backend.repository.UserDetailsRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 
 import java.util.List;
 
@@ -42,7 +40,6 @@ public class PolicyService {
         return policyRepository.save(policy);
     }
 
-
     // ----------------------------------
     // VERIFY ADMIN PASSWORD
     // ----------------------------------
@@ -53,38 +50,63 @@ public class PolicyService {
         return passwordEncoder.matches(rawPassword, admin.getPassword());
     }
 
-
     // ----------------------------------
     // UPDATE POLICY
     // ----------------------------------
     public Policy updatePolicy(UpdateOrDeletePolicyRequest req) {
 
-        if (!verifyAdmin(req.getAdminPassword())) {
-            throw new RuntimeException("Admin password is incorrect!");
+        // Get admin user to check settings
+        UserDetails admin = userRepo.findByRole("ADMIN")
+                .orElseThrow(() -> new RuntimeException("Admin account not found!"));
+
+        // Only verify password if required by settings
+        if (admin.isRequirePasswordForActions()) {
+            if (req.getAdminPassword() == null || req.getAdminPassword().isEmpty()) {
+                throw new RuntimeException("Admin password is required!");
+            }
+            if (!passwordEncoder.matches(req.getAdminPassword(), admin.getPassword())) {
+                throw new RuntimeException("Admin password is incorrect!");
+            }
         }
 
         Policy policy = policyRepository.findById(req.getPolicyId())
                 .orElseThrow(() -> new RuntimeException("Policy not found"));
 
-        if (req.getPolicyName() != null) policy.setPolicyName(req.getPolicyName());
-        if (req.getDescription() != null) policy.setDescription(req.getDescription());
-        if (req.getPremiumAmount() != null) policy.setPremiumAmount(req.getPremiumAmount());
-        if (req.getCoverageAmount() != null) policy.setCoverageAmount(req.getCoverageAmount());
-        if (req.getDuration() != null) policy.setDuration(req.getDuration());
-        if (req.getCriteria() != null) policy.setCriteria(req.getCriteria());
-        if (req.getStatus() != null) policy.setStatus(req.getStatus());
+        if (req.getPolicyName() != null)
+            policy.setPolicyName(req.getPolicyName());
+        if (req.getDescription() != null)
+            policy.setDescription(req.getDescription());
+        if (req.getPremiumAmount() != null)
+            policy.setPremiumAmount(req.getPremiumAmount());
+        if (req.getCoverageAmount() != null)
+            policy.setCoverageAmount(req.getCoverageAmount());
+        if (req.getDuration() != null)
+            policy.setDuration(req.getDuration());
+        if (req.getCriteria() != null)
+            policy.setCriteria(req.getCriteria());
+        if (req.getStatus() != null)
+            policy.setStatus(req.getStatus());
 
         return policyRepository.save(policy);
     }
-
 
     // ----------------------------------
     // DELETE POLICY
     // ----------------------------------
     public String deletePolicy(UpdateOrDeletePolicyRequest req) {
 
-        if (!verifyAdmin(req.getAdminPassword())) {
-            throw new RuntimeException("Admin password is incorrect!");
+        // Get admin user to check settings
+        UserDetails admin = userRepo.findByRole("ADMIN")
+                .orElseThrow(() -> new RuntimeException("Admin account not found!"));
+
+        // Only verify password if required by settings
+        if (admin.isRequirePasswordForActions()) {
+            if (req.getAdminPassword() == null || req.getAdminPassword().isEmpty()) {
+                throw new RuntimeException("Admin password is required!");
+            }
+            if (!passwordEncoder.matches(req.getAdminPassword(), admin.getPassword())) {
+                throw new RuntimeException("Admin password is incorrect!");
+            }
         }
 
         Policy policy = policyRepository.findById(req.getPolicyId())

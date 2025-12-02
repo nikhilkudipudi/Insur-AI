@@ -7,7 +7,6 @@ import lombok.Setter;
 @Setter
 public class UpdateOrDeletePolicyRequest {
 
-
     private Long policyId;
 
     // Fields for update (optional when deleting)
@@ -15,7 +14,7 @@ public class UpdateOrDeletePolicyRequest {
     private String description;
     private Double premiumAmount;
     private Double coverageAmount;
-    private Integer duration;
+    private String duration;
     private String criteria;
     private String status;
 

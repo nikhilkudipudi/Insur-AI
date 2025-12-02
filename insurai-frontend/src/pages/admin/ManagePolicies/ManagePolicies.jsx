@@ -12,9 +12,9 @@ export default function ManagePolicies() {
       slug: "health-insurance",
       icon: HeartPulse,
       description: "Manage medical, dental, and wellness policies.",
-      textColor: "text-green-700",
-      ringColor: "hover:ring-green-500",
-      shadowColor: "hover:shadow-green-100",
+      textColor: "text-yellow-600",
+      ringColor: "hover:ring-yellow-500",
+      shadowColor: "hover:shadow-yellow-100",
     },
     {
       title: "Life Insurance",
@@ -61,9 +61,9 @@ export default function ManagePolicies() {
   return (
     // Switched to a more neutral background to let the card colors pop
     <div className="min-h-screen p-10 bg-slate-50">
-      
+
       {/* Centered title container */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -79,7 +79,7 @@ export default function ManagePolicies() {
 
       {/* A wider grid that is 2-col on medium and 4-col on large screens */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        
+
         {cards.map((c, index) => (
           <motion.div
             key={c.slug}
@@ -87,9 +87,9 @@ export default function ManagePolicies() {
             initial="hidden"
             animate="visible"
             variants={cardVariants}
-            
+
             onClick={() => navigate(`/admin/manage-policies/${c.slug}`)}
-            
+
             // Card Styling
             className={`
               cursor-pointer bg-white rounded-2xl shadow-lg 
@@ -101,15 +101,15 @@ export default function ManagePolicies() {
             `}
           >
             {/* Icon */}
-            <c.icon 
-              className={`w-16 h-16 mb-5 ${c.textColor} transition-transform duration-300 group-hover:scale-110`} 
+            <c.icon
+              className={`w-16 h-16 mb-5 ${c.textColor} transition-transform duration-300 group-hover:scale-110`}
             />
-            
+
             {/* Title */}
             <h2 className={`text-2xl font-bold ${c.textColor} mb-3`}>
               {c.title}
             </h2>
-            
+
             {/* Description */}
             <p className="text-gray-600 text-base">
               {c.description}

@@ -23,7 +23,7 @@ export default function AdminDashboard() {
     { id: "policies", title: "Manage Policies", icon: <Briefcase className="w-5 h-5" />, path: "/admin/manage-policies" },
     { id: "customers", title: "Customers", icon: <Users className="w-5 h-5" />, path: "/admin/customers" },
     { id: "claims", title: "Claims & Requests", icon: <ClipboardList className="w-5 h-5" />, path: "/admin/claims" },
-    { id: "analytics", title: "AI Insights", icon: <Brain className="w-5 h-5" />, path: "/admin/analytics" },
+    { id: "analytics", title: "Quick View", icon: <Brain className="w-5 h-5" />, path: "/admin/analytics" },
     { id: "settings", title: "Settings", icon: <Settings className="w-5 h-5" />, path: "/admin/settings" },
   ];
 
@@ -37,12 +37,12 @@ export default function AdminDashboard() {
       />
 
       {/* Sidebar */}
-      <aside className="w-72 bg-green-800 text-white flex flex-col shadow-2xl z-10">
-        <div className="p-6 border-b border-green-700 flex items-center gap-3">
-          <div className="bg-white text-green-700 p-2 rounded-full shadow-md">
+      <aside className="w-72 bg-white text-green-800 flex flex-col shadow-2xl z-10 border-r border-green-100">
+        <div className="p-6 border-b border-green-100 flex items-center gap-3">
+          <div className="bg-green-50 text-green-700 p-2 rounded-full shadow-sm">
             <Shield className="w-6 h-6" />
           </div>
-          <h1 className="text-2xl font-bold tracking-wide">InsurAI Admin</h1>
+          <h1 className="text-2xl font-bold tracking-wide text-green-800">InsurAI Admin</h1>
         </div>
 
         <nav className="flex-1 p-6 space-y-2">
@@ -53,11 +53,10 @@ export default function AdminDashboard() {
                 setActiveSection(item.id);
                 if (item.path) navigate(item.path);
               }}
-              className={`flex items-center w-full gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${
-                activeSection === item.id
-                  ? "bg-green-500 shadow-md scale-105"
-                  : "hover:bg-green-700 hover:scale-[1.02]"
-              }`}
+              className={`flex items-center w-full gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${activeSection === item.id
+                ? "bg-green-600 text-white shadow-md scale-105"
+                : "text-green-700 hover:bg-green-50 hover:scale-[1.02]"
+                }`}
             >
               {item.icon}
               <span className="font-medium">{item.title}</span>
@@ -65,8 +64,8 @@ export default function AdminDashboard() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-green-700 text-center text-sm">
-          <button className="flex items-center justify-center gap-2 w-full text-white hover:text-red-300 transition">
+        <div className="p-4 border-t border-green-100 text-center text-sm">
+          <button className="flex items-center justify-center gap-2 w-full text-green-700 hover:text-red-600 transition font-medium">
             <LogOut className="w-4 h-4" />
             Logout
           </button>
@@ -89,29 +88,37 @@ export default function AdminDashboard() {
 
         {/* Overview Section */}
         {activeSection === "overview" && (
-          <div>
-            <p className="text-gray-700 mb-8 text-lg">
-              Gain AI-driven insights, manage policies, and monitor your insurance ecosystem efficiently.
-            </p>
+          <div className="flex flex-col items-center justify-center h-[60vh] text-center space-y-6">
+            <div className="bg-green-100 p-6 rounded-full shadow-lg mb-4">
+              <Shield className="w-20 h-20 text-green-700" />
+            </div>
 
-            {/* Overview Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {[
-                { title: "Active Policies", value: "1,204", color: "from-green-500 to-green-600" },
-                { title: "Registered Users", value: "842", color: "from-blue-500 to-blue-600" },
-                { title: "Pending Claims", value: "56", color: "from-yellow-400 to-yellow-500" },
-                { title: "Revenue Growth", value: "+12.8%", color: "from-purple-500 to-purple-600" },
-                { title: "AI Predictions", value: "93% Accuracy", color: "from-pink-500 to-pink-600" },
-                { title: "Customer Retention", value: "89%", color: "from-teal-500 to-teal-600" },
-              ].map((card) => (
-                <div
-                  key={card.title}
-                  className={`p-6 bg-gradient-to-r ${card.color} text-white rounded-xl shadow-lg hover:scale-[1.03] transition-all`}
-                >
-                  <h4 className="font-semibold mb-2">{card.title}</h4>
-                  <p className="text-3xl font-bold">{card.value}</p>
-                </div>
-              ))}
+            <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-800 to-emerald-600">
+              InsurAI
+            </h1>
+
+            <div className="max-w-2xl space-y-4">
+              <p className="text-2xl font-light text-gray-700">
+                The Future of Intelligent Insurance Management
+              </p>
+              <p className="text-gray-500 leading-relaxed">
+                InsurAI leverages advanced artificial intelligence to streamline policy administration,
+                automate claim processing, and provide deep analytical insights.
+                Empowering administrators with a secure, efficient, and data-driven platform
+                to deliver superior insurance services.
+              </p>
+            </div>
+
+            <div className="pt-8 flex gap-4">
+              <div className="px-6 py-2 bg-white rounded-full shadow-sm border border-gray-100 text-sm font-medium text-gray-600 flex items-center gap-2">
+                <Brain className="w-4 h-4 text-purple-500" /> AI-Powered
+              </div>
+              <div className="px-6 py-2 bg-white rounded-full shadow-sm border border-gray-100 text-sm font-medium text-gray-600 flex items-center gap-2">
+                <Shield className="w-4 h-4 text-blue-500" /> Secure
+              </div>
+              <div className="px-6 py-2 bg-white rounded-full shadow-sm border border-gray-100 text-sm font-medium text-gray-600 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-green-500" /> Analytics
+              </div>
             </div>
           </div>
         )}

@@ -24,6 +24,10 @@ import HealthInsurancePolicies from './pages/user/browsePolicies/HealthInsurance
 import LifeInsurancePolicies from './pages/user/browsePolicies/LifeInsurancePolicies';
 import PropertyCasualtyPolicies from './pages/user/browsePolicies/PropertyCasualtyPolicies';
 import CommercialInsurancePolicies from './pages/user/browsePolicies/CommercialInsurancePolicies';
+import ViewApplyPolicy from './pages/user/browsePolicies/ViewApplyPolicy';
+import UserManagePolicies from './pages/user/ManagePolicies';
+import FileClaims from './pages/user/FileClaims';
+import TrackClaims from './pages/user/TrackClaims';
 
 import Customers from "./pages/admin/Customers";
 import Claims from "./pages/admin/Claims";
@@ -72,18 +76,18 @@ function AppContent() {
           {/* Admin manage policies routes */}
           <Route path="/admin/manage-policies" element={<ManagePolicies />} />
 
-           {/* Category pages */}
-            <Route path="/admin/manage-policies/health-insurance" element={<HealthInsurance />} />
-            <Route path="/admin/manage-policies/life-insurance" element={<LifeInsurance />} />
-            <Route path="/admin/manage-policies/property-casualty" element={<PropertyCasualtyInsurance />} />
-            <Route path="/admin/manage-policies/commercial-insurance" element={<CommercialInsurance />} />
+          {/* Category pages */}
+          <Route path="/admin/manage-policies/health-insurance" element={<HealthInsurance />} />
+          <Route path="/admin/manage-policies/life-insurance" element={<LifeInsurance />} />
+          <Route path="/admin/manage-policies/property-casualty" element={<PropertyCasualtyInsurance />} />
+          <Route path="/admin/manage-policies/commercial-insurance" element={<CommercialInsurance />} />
 
 
           {/* Dynamic CRUD pages (single set reused) */}
-            <Route path="/admin/manage-policies/:policySegment/add" element={<AddNewPolicy />} />
-            <Route path="/admin/manage-policies/:policySegment/update" element={<UpdatePolicy />} />
-            <Route path="/admin/manage-policies/:policySegment/remove" element={<RemovePolicy />} />
-            <Route path="/admin/manage-policies/:policySegment/view" element={<ViewPolicies />} />
+          <Route path="/admin/manage-policies/:policySegment/add" element={<AddNewPolicy />} />
+          <Route path="/admin/manage-policies/:policySegment/update" element={<UpdatePolicy />} />
+          <Route path="/admin/manage-policies/:policySegment/remove" element={<RemovePolicy />} />
+          <Route path="/admin/manage-policies/:policySegment/view" element={<ViewPolicies />} />
 
 
 
@@ -96,33 +100,39 @@ function AppContent() {
           <Route path="/user/browse-policies" element={<BrowsePolicies />} />
 
           {/* User Browse Policies - Policy Lists (The four new pages) */}
-        <Route 
-          path="/user/browse-policies/health-insurance" 
-          element={<HealthInsurancePolicies />} 
-        />
-        <Route 
-          path="/user/browse-policies/life-insurance" 
-          element={<LifeInsurancePolicies />} 
-        />
-        <Route 
-          path="/user/browse-policies/property-casualty" 
-          element={<PropertyCasualtyPolicies />} 
-        />
-        <Route 
-          path="/user/browse-policies/commercial-insurance" 
-          element={<CommercialInsurancePolicies />} 
-        />
-        
-        {/* Placeholders for other User Dashboard routes */}
-        <Route path="/user/manage-policies" element={<div>Manage Policies Content...</div>} />
+          <Route
+            path="/user/browse-policies/health-insurance"
+            element={<HealthInsurancePolicies />}
+          />
+          <Route
+            path="/user/browse-policies/life-insurance"
+            element={<LifeInsurancePolicies />}
+          />
+          <Route
+            path="/user/browse-policies/property-casualty"
+            element={<PropertyCasualtyPolicies />}
+          />
+          <Route
+            path="/user/browse-policies/commercial-insurance"
+            element={<CommercialInsurancePolicies />}
+          />
 
-        <Route path="/user/file-claims" element={<div>File Claims Page...</div>} />
-        <Route path="/user/track-claims" element={<div>Track Claims Page...</div>} />
-        <Route path="/user/billing" element={<div>Billing Page...</div>} />
-        <Route path="/user/support" element={<div>Support Page...</div>} />
+          {/* View & Apply Policy Page */}
+          <Route
+            path="/user/browse-policies/:category/view-apply/:policyId"
+            element={<ViewApplyPolicy />}
+          />
 
-        {/* Catch-all for 404 */}
-        <Route path="*" element={<NotFound />} />
+          {/* Placeholders for other User Dashboard routes */}
+          <Route path="/user/manage-policies" element={<UserManagePolicies />} />
+
+          <Route path="/user/file-claims" element={<FileClaims />} />
+          <Route path="/user/track-claims" element={<TrackClaims />} />
+          <Route path="/user/billing" element={<div>Billing Page...</div>} />
+          <Route path="/user/support" element={<div>Support Page...</div>} />
+
+          {/* Catch-all for 404 */}
+          <Route path="*" element={<NotFound />} />
 
 
         </Routes>
@@ -134,11 +144,15 @@ function AppContent() {
   );
 }
 
+import { ThemeProvider } from './context/ThemeContext';
+
 // ✅ Main App export
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppContent />
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }

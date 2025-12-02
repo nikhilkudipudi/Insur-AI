@@ -33,7 +33,7 @@ public class Policy {
     private Double coverageAmount;
 
     @Column(nullable = false)
-    private Integer duration; // in months or years
+    private String duration; // in months or years
 
     @Column(nullable = false)
     private String criteria; // 🆕 your custom field

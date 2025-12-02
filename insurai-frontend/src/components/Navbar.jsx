@@ -54,10 +54,10 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full z-50 bg-green-600 text-white p-4 flex justify-between items-center shadow-md">
+      <nav className="fixed top-0 left-0 w-full z-50 bg-white text-green-700 p-4 flex justify-between items-center shadow-lg backdrop-blur-sm bg-opacity-95 border-b border-green-100">
         {/* LOGO */}
         <h1
-          className="text-2xl font-bold pl-12 bg-no-repeat bg-left bg-contain cursor-pointer"
+          className="text-2xl font-bold pl-12 bg-no-repeat bg-left bg-contain cursor-pointer text-green-700"
           style={{ backgroundImage: "url('/leaf-logo.png')" }}
           onClick={handleHomeClick}
         >
@@ -74,17 +74,16 @@ export default function Navbar() {
                   btn.onClick
                     ? btn.onClick
                     : () => {
-                        setActiveButton(btn.name);
-                        navigate(btn.path);
-                      }
+                      setActiveButton(btn.name);
+                      navigate(btn.path);
+                    }
                 }
-                className="relative px-4 py-2 font-semibold text-white hover:text-green-100 transition-colors duration-300"
+                className="relative px-4 py-2 font-semibold text-green-700 hover:text-green-900 transition-colors duration-300"
               >
                 {btn.name}
                 <span
-                  className={`absolute left-0 bottom-0 w-full h-0.5 bg-white transition-all duration-300 ${
-                    activeButton === btn.name ? "scale-x-100" : "scale-x-0"
-                  } origin-center`}
+                  className={`absolute left-0 bottom-0 w-full h-0.5 bg-green-600 transition-all duration-300 ${activeButton === btn.name ? "scale-x-100" : "scale-x-0"
+                    } origin-center`}
                 ></span>
               </button>
             ))}
@@ -96,7 +95,7 @@ export default function Navbar() {
           <div className="relative">
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="flex items-center gap-2 bg-green-700 px-3 py-2 rounded-full hover:bg-green-800 transition"
+              className="flex items-center gap-2 bg-white text-green-700 border border-green-600 px-3 py-2 rounded-full hover:bg-green-50 transition shadow-sm"
             >
               <User className="w-5 h-5" />
               <span className="font-semibold">{role === "ADMIN" ? "Admin" : "User"}</span>

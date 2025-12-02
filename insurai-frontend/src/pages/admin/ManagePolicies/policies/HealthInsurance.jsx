@@ -10,8 +10,13 @@ export default function HealthInsurance() {
       whileHover={{ scale: 1.04 }}
       whileTap={{ scale: 0.97 }}
       onClick={() => navigate(path)}
-      className="flex items-center justify-center gap-3 bg-green-100 hover:bg-green-200 
-                 text-green-700 font-semibold py-4 rounded-xl shadow-md transition"
+      className="flex items-center justify-center gap-3 font-semibold py-4 rounded-xl shadow-md transition"
+      style={{
+        backgroundColor: '#FFF9E6',
+        color: '#B8860B',
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#FFDE21'}
+      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#FFF9E6'}
     >
       {icon}
       {label}
@@ -19,15 +24,15 @@ export default function HealthInsurance() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 p-10 text-center">
-      
+    <div className="min-h-screen p-10 text-center" style={{ background: 'linear-gradient(to bottom right, #FFFEF0, #FFFFFF, #FFFEF0)' }}>
+
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-10"
       >
-        <HeartPulse className="w-12 h-12 text-green-700 mx-auto mb-2" />
-        <h2 className="text-4xl font-bold text-green-700 mb-3">
+        <HeartPulse className="w-12 h-12 mx-auto mb-2" style={{ color: '#FFDE21' }} />
+        <h2 className="text-4xl font-bold mb-3" style={{ color: '#B8860B' }}>
           Health Insurance Management
         </h2>
         <p className="text-gray-600 max-w-2xl mx-auto">
@@ -46,7 +51,10 @@ export default function HealthInsurance() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => navigate("/admin/manage-policies")}
-        className="mt-12 bg-green-700 text-white py-2 px-8 rounded-lg shadow-md hover:bg-green-800 transition"
+        className="mt-12 text-white py-2 px-8 rounded-lg shadow-md transition"
+        style={{ backgroundColor: '#FFDE21' }}
+        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#E6C71F'}
+        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#FFDE21'}
       >
         ← Back
       </motion.button>

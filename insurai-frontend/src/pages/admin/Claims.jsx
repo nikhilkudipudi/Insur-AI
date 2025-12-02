@@ -1,190 +1,261 @@
-import { useState } from "react";
-import { CheckCircle, XCircle, AlertTriangle, FileText, Filter } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  FileText,
+  Calendar,
+  DollarSign,
+  CheckCircle,
+  Clock,
+  XCircle,
+  Shield,
+  User,
+  Mail
+} from "lucide-react";
+import { getAllClaims, updateClaimStatus } from "../../api/authService";
 
 export default function Claims() {
-  const [selectedFilter, setSelectedFilter] = useState("All");
+  const [claims, setClaims] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("ALL"); // ALL, PENDING, APPROVED, REJECTED
 
-  const filters = ["All", "Pending", "Approved", "Rejected"];
+  useEffect(() => {
+    fetchClaims();
+  }, []);
 
-  const claimsData = [
-    {
-      id: 1,
-      customer: "Ravi Kumar",
-      policyType: "Health Insurance",
-      claimAmount: "₹1,20,000",
-      date: "2025-10-29",
-      status: "Pending",
-      reason: "Hospitalization for surgery",
-    },
-    {
-      id: 2,
-      customer: "Priya Sharma",
-      policyType: "Life Insurance",
-      claimAmount: "₹5,00,000",
-      date: "2025-10-25",
-      status: "Approved",
-      reason: "Death benefit claim",
-    },
-    {
-      id: 3,
-      customer: "Amit Verma",
-      policyType: "Property & Casualty",
-      claimAmount: "₹3,45,000",
-      date: "2025-10-18",
-      status: "Rejected",
-      reason: "Fire damage not covered under plan",
-    },
-    {
-      id: 4,
-      customer: "Sneha Patel",
-      policyType: "Commercial Insurance",
-      claimAmount: "₹2,75,000",
-      date: "2025-10-30",
-      status: "Pending",
-      reason: "Equipment loss in transit",
-    },
-  ];
-
-  const filteredClaims =
-    selectedFilter === "All"
-      ? claimsData
-      : claimsData.filter((claim) => claim.status === selectedFilter);
-
-  const handleApprove = (name) => {
-    alert(`✅ Claim from ${name} has been approved.`);
+  const fetchClaims = async () => {
+    setLoading(true);
+    const res = await getAllClaims();
+    if (res.ok && Array.isArray(res.data)) {
+      setClaims(res.data);
+    }
+    setLoading(false);
   };
 
-  const handleReject = (name) => {
-    alert(`❌ Claim from ${name} has been rejected.`);
+  const handleStatusUpdate = async (claimId, newStatus) => {
+    if (!confirm(`Are you sure you want to ${newStatus.toLowerCase()} this claim?`)) return;
+
+    const res = await updateClaimStatus(claimId, newStatus);
+    if (res.ok) {
+      alert(`Claim ${newStatus.toLowerCase()} successfully!`);
+      fetchClaims(); // Refresh the list
+    } else {
+      alert("Failed to update claim status");
+    }
   };
+
+  const getStatusBadge = (status) => {
+    const config = {
+      PENDING: {
+        bg: "bg-yellow-100",
+        text: "text-yellow-800",
+        border: "border-yellow-300",
+        icon: <Clock className="w-4 h-4" />
+      },
+      APPROVED: {
+        bg: "bg-green-100",
+        text: "text-green-800",
+        border: "border-green-300",
+        icon: <CheckCircle className="w-4 h-4" />
+      },
+      REJECTED: {
+        bg: "bg-red-100",
+        text: "text-red-800",
+        border: "border-red-300",
+        icon: <XCircle className="w-4 h-4" />
+      }
+    };
+
+    const statusConfig = config[status] || config.PENDING;
+
+    return (
+      <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border-2 ${statusConfig.bg} ${statusConfig.text} ${statusConfig.border} font-semibold text-sm`}>
+        {statusConfig.icon}
+        {status}
+      </div>
+    );
+  };
+
+  const filteredClaims = filter === "ALL"
+    ? claims
+    : claims.filter(claim => claim.status === filter);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg font-medium">Loading claims...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 p-10">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row items-center justify-between mb-10">
-        <h1 className="text-4xl font-bold text-green-800 mb-6 md:mb-0 flex items-center gap-3">
-          <FileText className="w-8 h-8 text-green-600" />
-          Claims & Requests
-        </h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-10"
+        >
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Claims Management</h1>
+          <p className="text-gray-600 text-lg">Review and manage insurance claims</p>
+        </motion.div>
 
-        {/* Filter Dropdown */}
-        <div className="relative flex items-center bg-white/70 backdrop-blur-md border border-green-300 px-4 py-2 rounded-lg shadow-md">
-          <Filter className="w-5 h-5 text-green-600 mr-2" />
-          <select
-            value={selectedFilter}
-            onChange={(e) => setSelectedFilter(e.target.value)}
-            className="bg-transparent outline-none text-green-700 font-medium cursor-pointer"
+        {/* Filter Tabs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 flex gap-4 bg-white p-2 rounded-2xl shadow-lg border border-gray-100"
+        >
+          {["ALL", "PENDING", "APPROVED", "REJECTED"].map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilter(status)}
+              className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all ${filter === status
+                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
+                  : "text-gray-600 hover:bg-gray-100"
+                }`}
+            >
+              {status}
+              <span className="ml-2 text-sm">
+                ({status === "ALL" ? claims.length : claims.filter(c => c.status === status).length})
+              </span>
+            </button>
+          ))}
+        </motion.div>
+
+        {filteredClaims.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-3xl shadow-xl p-12 text-center border border-gray-100"
           >
-            {filters.map((f, idx) => (
-              <option key={idx} value={f}>
-                {f}
-              </option>
+            <div className="text-gray-400 text-6xl mb-4">📋</div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">No Claims Found</h2>
+            <p className="text-gray-600">No claims match the selected filter.</p>
+          </motion.div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6">
+            {filteredClaims.map((claim, index) => (
+              <motion.div
+                key={claim.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all"
+              >
+                <div className="p-6">
+                  {/* Header */}
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Shield className="w-5 h-5 text-blue-600" />
+                        <h3 className="text-2xl font-bold text-gray-900">{claim.policy.policyName}</h3>
+                      </div>
+                      <p className="text-gray-600">{claim.policy.policyType} Insurance</p>
+                    </div>
+                    {getStatusBadge(claim.status)}
+                  </div>
+
+                  {/* User Info */}
+                  <div className="bg-gray-50 p-4 rounded-xl mb-6 border border-gray-200">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4 text-gray-600" />
+                        <span className="text-sm text-gray-600">User:</span>
+                        <span className="font-semibold text-gray-900">{claim.user.fullName}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-4 h-4 text-gray-600" />
+                        <span className="text-sm text-gray-600">Email:</span>
+                        <span className="font-semibold text-gray-900">{claim.user.email}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Claim Details */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div className="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                      <div className="flex items-center gap-2 text-purple-700 mb-1 text-sm font-semibold">
+                        <DollarSign className="w-4 h-4" />
+                        Claim Amount
+                      </div>
+                      <div className="text-xl font-bold text-purple-900">
+                        ₹{claim.claimAmount?.toLocaleString()}
+                      </div>
+                    </div>
+
+                    <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                      <div className="flex items-center gap-2 text-blue-700 mb-1 text-sm font-semibold">
+                        <Calendar className="w-4 h-4" />
+                        Incident Date
+                      </div>
+                      <div className="text-lg font-bold text-blue-900">
+                        {new Date(claim.incidentDate).toLocaleDateString()}
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                      <div className="flex items-center gap-2 text-gray-700 mb-1 text-sm font-semibold">
+                        <Calendar className="w-4 h-4" />
+                        Submitted On
+                      </div>
+                      <div className="text-sm font-bold text-gray-900">
+                        {new Date(claim.submittedDate).toLocaleDateString()}
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        {new Date(claim.submittedDate).toLocaleTimeString()}
+                      </div>
+                    </div>
+
+                    <div className="bg-green-50 p-4 rounded-xl border border-green-200">
+                      <div className="flex items-center gap-2 text-green-700 mb-1 text-sm font-semibold">
+                        <Shield className="w-4 h-4" />
+                        Coverage
+                      </div>
+                      <div className="text-lg font-bold text-green-900">
+                        ₹{claim.policy.coverageAmount?.toLocaleString()}
+                      </div>
+                      <div className="text-xs text-green-600">max</div>
+                    </div>
+                  </div>
+
+                  {/* Incident Description */}
+                  {claim.incidentDescription && (
+                    <div className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <FileText className="w-4 h-4 text-gray-600" />
+                        <span className="font-semibold text-gray-700">Incident Description</span>
+                      </div>
+                      <p className="text-gray-700 text-sm">{claim.incidentDescription}</p>
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  {claim.status === "PENDING" && (
+                    <div className="flex gap-4 pt-4 border-t-2 border-gray-100">
+                      <button
+                        onClick={() => handleStatusUpdate(claim.id, "APPROVED")}
+                        className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                      >
+                        <CheckCircle className="w-5 h-5" />
+                        Approve Claim
+                      </button>
+                      <button
+                        onClick={() => handleStatusUpdate(claim.id, "REJECTED")}
+                        className="flex-1 bg-gradient-to-r from-red-600 to-rose-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-red-700 hover:to-rose-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                      >
+                        <XCircle className="w-5 h-5" />
+                        Reject Claim
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
             ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <div className="p-6 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-xl shadow-lg hover:scale-[1.03] transition-all">
-          <h4 className="font-semibold mb-2">Pending Claims</h4>
-          <p className="text-3xl font-bold">
-            {claimsData.filter((c) => c.status === "Pending").length}
-          </p>
-        </div>
-        <div className="p-6 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl shadow-lg hover:scale-[1.03] transition-all">
-          <h4 className="font-semibold mb-2">Approved Claims</h4>
-          <p className="text-3xl font-bold">
-            {claimsData.filter((c) => c.status === "Approved").length}
-          </p>
-        </div>
-        <div className="p-6 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl shadow-lg hover:scale-[1.03] transition-all">
-          <h4 className="font-semibold mb-2">Rejected Claims</h4>
-          <p className="text-3xl font-bold">
-            {claimsData.filter((c) => c.status === "Rejected").length}
-          </p>
-        </div>
-        <div className="p-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl shadow-lg hover:scale-[1.03] transition-all">
-          <h4 className="font-semibold mb-2">Total Claims</h4>
-          <p className="text-3xl font-bold">{claimsData.length}</p>
-        </div>
-      </div>
-
-      {/* Claims Table */}
-      <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-8">
-        <h2 className="text-2xl font-bold text-green-700 mb-6 flex items-center gap-2">
-          <AlertTriangle className="w-6 h-6 text-green-600" />
-          Claim Details
-        </h2>
-
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-left text-gray-700">
-            <thead>
-              <tr className="bg-green-100 text-green-800 uppercase text-sm font-semibold">
-                <th className="py-3 px-6">Customer Name</th>
-                <th className="py-3 px-6">Policy Type</th>
-                <th className="py-3 px-6">Claim Amount</th>
-                <th className="py-3 px-6">Date</th>
-                <th className="py-3 px-6">Reason</th>
-                <th className="py-3 px-6">Status</th>
-                <th className="py-3 px-6 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredClaims.map((claim) => (
-                <tr
-                  key={claim.id}
-                  className="border-b hover:bg-green-50 transition-colors duration-200"
-                >
-                  <td className="py-3 px-6 font-medium">{claim.customer}</td>
-                  <td className="py-3 px-6">{claim.policyType}</td>
-                  <td className="py-3 px-6 font-semibold text-green-700">
-                    {claim.claimAmount}
-                  </td>
-                  <td className="py-3 px-6">{claim.date}</td>
-                  <td className="py-3 px-6">{claim.reason}</td>
-                  <td className="py-3 px-6">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                        claim.status === "Approved"
-                          ? "bg-green-100 text-green-700"
-                          : claim.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {claim.status}
-                    </span>
-                  </td>
-                  <td className="py-3 px-6 flex justify-center gap-3">
-                    <button
-                      onClick={() => handleApprove(claim.customer)}
-                      disabled={claim.status !== "Pending"}
-                      className={`${
-                        claim.status === "Pending"
-                          ? "bg-green-100 hover:bg-green-200 text-green-700"
-                          : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      } px-3 py-2 rounded-lg flex items-center gap-1 transition-all`}
-                    >
-                      <CheckCircle className="w-4 h-4" /> Approve
-                    </button>
-                    <button
-                      onClick={() => handleReject(claim.customer)}
-                      disabled={claim.status !== "Pending"}
-                      className={`${
-                        claim.status === "Pending"
-                          ? "bg-red-100 hover:bg-red-200 text-red-700"
-                          : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      } px-3 py-2 rounded-lg flex items-center gap-1 transition-all`}
-                    >
-                      <XCircle className="w-4 h-4" /> Reject
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

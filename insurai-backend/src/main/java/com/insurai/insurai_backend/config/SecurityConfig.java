@@ -17,7 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import java.util.Arrays; // Import Arrays
+import java.util.Arrays;
 
 @EnableWebSecurity
 @Configuration
@@ -44,12 +44,18 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Allow all OPTIONS requests (preflights) to pass through
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // Allow all paths under /api/auth/ (e.g., signup, login) to be accessed without authentication
-                        .requestMatchers("/api/auth/**").permitAll()// <-- CORRECTED LINE
+                        // Allow all paths under /api/auth/ (e.g., signup, login) to be accessed without
+                        // authentication
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // User endpoints - require authentication
+                        .requestMatchers("/api/user/**").authenticated()
+
+                        // Admin endpoints - require ADMIN role
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
                         // All other requests require authentication
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
@@ -71,12 +77,13 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        // Allow sending credentials (cookies, HTTP authentication headers like Authorization)
+        // Allow sending credentials (cookies, HTTP authentication headers like
+        // Authorization)
         config.setAllowCredentials(true);
 
         // List all origins your frontend will be served from.
-        // IMPORTANT: For production, replace localhost with your actual frontend domain(s).
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://34.83.226.35/", "http://devbridge.ddns.net/"));
+        config.setAllowedOrigins(
+                Arrays.asList("http://localhost:5173", "http://34.83.226.35/", "http://devbridge.ddns.net/"));
 
         // Allow all common HTTP methods
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
@@ -84,7 +91,8 @@ public class SecurityConfig {
         // Allow all headers (e.g., Content-Type, Authorization, Custom-Header)
         config.setAllowedHeaders(Arrays.asList("*"));
 
-        // How long the pre-flight request's result can be cached by the browser (in seconds)
+        // How long the pre-flight request's result can be cached by the browser (in
+        // seconds)
         config.setMaxAge(3600L); // 1 hour
 
         // Apply this CORS configuration to all paths (/**)

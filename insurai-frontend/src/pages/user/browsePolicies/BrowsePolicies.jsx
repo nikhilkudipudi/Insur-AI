@@ -11,9 +11,9 @@ export default function BrowsePolicies() {
       slug: "health-insurance",
       icon: HeartPulse,
       description: "Comprehensive medical and wellness protection plans.",
-      color: "green",
-      bgClass: "bg-green-50",
-      textColor: "text-green-700",
+      customColor: "#FFDE21",
+      customBg: "#FFF9E6",
+      customHoverBg: "#FFDE21",
     },
     {
       title: "Life Insurance",
@@ -68,7 +68,7 @@ export default function BrowsePolicies() {
   return (
     <div className="min-h-screen p-10 bg-gray-50">
       <div className="max-w-6xl mx-auto">
-        
+
         <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-12 text-center">
           <h1 className="text-4xl font-bold text-slate-800 mb-3">
             Explore Insurance Plans
@@ -84,29 +84,53 @@ export default function BrowsePolicies() {
           initial="hidden"
           animate="visible"
         >
-          {cards.map((c) => (
-            <motion.div
-              key={c.slug}
-              variants={itemVariants}
-              whileHover={{ scale: 1.02, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)" }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => navigate(`/user/browse-policies/${c.slug}`)}
-              className={`cursor-pointer ${c.bgClass} p-8 rounded-2xl border-2 border-transparent hover:border-white transition-all duration-300 shadow-lg`}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-4">
-                  <c.icon className={`w-10 h-10 ${c.textColor}`} />
-                  <div>
-                    <h2 className={`text-2xl font-bold ${c.textColor} mb-1`}>
-                      {c.title}
-                    </h2>
-                    <p className="text-gray-600">{c.description}</p>
+          {cards.map((c) => {
+            const isCustomColor = c.customColor;
+
+            return (
+              <motion.div
+                key={c.slug}
+                variants={itemVariants}
+                whileHover={{ scale: 1.02, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)" }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate(`/user/browse-policies/${c.slug}`)}
+                className={`cursor-pointer p-8 rounded-2xl border-2 border-transparent hover:border-white transition-all duration-300 shadow-lg ${!isCustomColor ? c.bgClass : ''}`}
+                style={isCustomColor ? { backgroundColor: c.customBg } : {}}
+                onMouseEnter={(e) => {
+                  if (isCustomColor) {
+                    e.currentTarget.style.backgroundColor = c.customHoverBg + '40'; // 40 is hex for 25% opacity
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (isCustomColor) {
+                    e.currentTarget.style.backgroundColor = c.customBg;
+                  }
+                }}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-4">
+                    <c.icon
+                      className={`w-10 h-10 ${!isCustomColor ? c.textColor : ''}`}
+                      style={isCustomColor ? { color: '#B8860B' } : {}}
+                    />
+                    <div>
+                      <h2
+                        className={`text-2xl font-bold mb-1 ${!isCustomColor ? c.textColor : ''}`}
+                        style={isCustomColor ? { color: '#B8860B' } : {}}
+                      >
+                        {c.title}
+                      </h2>
+                      <p className="text-gray-600">{c.description}</p>
+                    </div>
                   </div>
+                  <ChevronRight
+                    className={`w-6 h-6 ${!isCustomColor ? c.textColor : ''}`}
+                    style={isCustomColor ? { color: '#B8860B' } : {}}
+                  />
                 </div>
-                <ChevronRight className={`w-6 h-6 ${c.textColor}`} />
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </div>

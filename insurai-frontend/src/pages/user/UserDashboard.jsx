@@ -7,15 +7,13 @@ import {
   Eye,
   LogOut,
   User,
-  CreditCard, // 💳 New Icon
-  LifeBuoy, // 💬 New Icon
+  LifeBuoy,
 } from "lucide-react";
 
 export default function UserDashboard() {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("overview");
 
-  // The menuItems array is expanded with new sections
   const menuItems = [
     {
       id: "manage",
@@ -57,18 +55,6 @@ export default function UserDashboard() {
       iconColor: "text-purple-600",
       hoverStyle: "hover:shadow-purple-200",
     },
-    // 👇 New Section 1
-    {
-      id: "billing",
-      title: "Payments & Billing",
-      icon: <CreditCard className="w-5 h-5" />,
-      path: "/user/billing",
-      description: "Check payment history, manage methods, and view due dates.",
-      cardBg: "bg-yellow-50",
-      iconColor: "text-yellow-600",
-      hoverStyle: "hover:shadow-yellow-200",
-    },
-    // 👇 New Section 2
     {
       id: "support",
       title: "Support & Help",
@@ -87,16 +73,16 @@ export default function UserDashboard() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-50"> {/* Softer background */}
-      
+    <div className="min-h-screen flex bg-gray-50">
+
       {/* Sidebar */}
-      <aside className="w-64 bg-slate-800 text-white flex flex-col shadow-2xl"> {/* Darker, sleeker sidebar */}
-        <div className="p-6 border-b border-slate-700">
+      <aside className="w-64 bg-white text-green-800 flex flex-col shadow-2xl border-r border-green-100">
+        <div className="p-6 border-b border-green-100">
           <div className="flex items-center gap-3">
-            <div className="bg-white text-slate-800 p-2 rounded-lg"> {/* Square icon background */}
+            <div className="bg-green-50 text-green-700 p-2 rounded-lg">
               <User className="w-6 h-6" />
             </div>
-            <h1 className="text-xl font-bold tracking-wide">InsurAI User</h1>
+            <h1 className="text-xl font-bold tracking-wide text-green-800">InsurAI User</h1>
           </div>
         </div>
 
@@ -105,11 +91,10 @@ export default function UserDashboard() {
             <button
               key={item.id}
               onClick={() => handleNavigation(item)}
-              className={`flex items-center w-full gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-left ${
-                activeSection === item.id
-                  ? "bg-green-600 text-white shadow-md font-semibold"
-                  : "hover:bg-slate-700 text-gray-300 hover:text-white" // Smoother hover
-              }`}
+              className={`flex items-center w-full gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-left ${activeSection === item.id
+                  ? "bg-green-600 text-white shadow-md font-semibold scale-105"
+                  : "text-green-700 hover:bg-green-50 hover:scale-[1.02]"
+                }`}
             >
               {item.icon}
               <span className="font-medium">{item.title}</span>
@@ -117,12 +102,12 @@ export default function UserDashboard() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-slate-700 text-sm text-center">
-          <button className="flex items-center justify-center gap-2 w-full text-gray-400 hover:text-red-400 transition">
+        <div className="p-4 border-t border-green-100 text-sm text-center">
+          <button className="flex items-center justify-center gap-2 w-full text-green-700 hover:text-red-600 transition font-medium">
             <LogOut className="w-4 h-4" />
             Logout
           </button>
-          <p className="text-gray-500 mt-3">© 2025 InsurAI</p>
+          <p className="text-gray-400 mt-3">© 2025 InsurAI</p>
         </div>
       </aside>
 
@@ -140,18 +125,18 @@ export default function UserDashboard() {
         </div>
 
         {/* Content Area */}
-        <div className="bg-white rounded-3xl shadow-xl p-8"> {/* Enhanced shadow and border radius */}
+        <div className="bg-white rounded-3xl shadow-xl p-8">
           {activeSection === "overview" && (
             <div className="text-gray-700">
               <h3 className="text-2xl font-bold text-slate-800 mb-5">
-                Quick Access & Policy Snapshot
+                Quick Access
               </h3>
-              
+
               <p className="text-gray-600 max-w-3xl mb-8">
-                Your central hub to manage all insurance needs. Choose an action below or view your policy summary.
+                Your central hub to manage all insurance needs. Choose an action below.
               </p>
 
-              {/* Action Cards Grid - Now 3 columns */}
+              {/* Action Cards Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {menuItems.map((item) => (
                   <div
@@ -166,18 +151,6 @@ export default function UserDashboard() {
                     </p>
                   </div>
                 ))}
-              </div>
-
-              {/* Example of a Policy Snapshot section */}
-              <div className="mt-12">
-                <h4 className="text-xl font-bold text-slate-800 mb-4 border-b pb-2">Your Current Policies (Snapshot)</h4>
-                <div className="p-4 bg-white border border-green-200 rounded-lg flex justify-between items-center shadow-sm">
-                  <div>
-                    <p className="font-semibold text-green-700">Health Plan Platinum</p>
-                    <p className="text-sm text-gray-500">Next Premium Due: Nov 30, 2025</p>
-                  </div>
-                  <button className="text-sm bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600">View Details</button>
-                </div>
               </div>
             </div>
           )}
