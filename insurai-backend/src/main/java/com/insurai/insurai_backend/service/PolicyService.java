@@ -25,7 +25,7 @@ public class PolicyService {
     // GET ALL POLICIES BY TYPE
     // ----------------------------------
     public List<Policy> getPoliciesByType(String type) {
-        return policyRepository.findByPolicyTypeIgnoreCase(type);
+        return policyRepository.findByPolicyType(type);
     }
 
     // ----------------------------------

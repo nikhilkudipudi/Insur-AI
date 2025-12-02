@@ -9,8 +9,8 @@ import java.util.List;
 @Repository
 public interface UserPolicyRepository extends JpaRepository<Policy, Long> {
 
-    // Method to fetch policies by type AND status, ignoring case for type
-    List<Policy> findByPolicyTypeIgnoreCaseAndStatus(String policyType, String status);
+    // Method to fetch policies by type AND status, ignoring case for both type and
+    // status
+    List<Policy> findByPolicyTypeIgnoreCaseAndStatusIgnoreCase(String policyType, String status);
 
-    // Note: The Policy entity is reused, as requested
 }

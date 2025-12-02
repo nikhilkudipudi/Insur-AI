@@ -22,7 +22,10 @@ public class UserPolicyController {
     // --------------------------
     @GetMapping("/{policyType}")
     public ResponseEntity<List<Policy>> getActiveByType(@PathVariable String policyType) {
+        System.out.println("UserPolicyController: Fetching active policies for type: " + policyType);
         // Pass the policy type to the service, which will filter by ACTIVE status
-        return ResponseEntity.ok(userPolicyService.getActivePoliciesByType(policyType));
+        List<Policy> policies = userPolicyService.getActivePoliciesByType(policyType);
+        System.out.println("UserPolicyController: Found " + policies.size() + " policies.");
+        return ResponseEntity.ok(policies);
     }
 }

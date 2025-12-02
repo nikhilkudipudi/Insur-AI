@@ -9,7 +9,6 @@ import java.util.List;
 @Repository
 public interface PolicyRepository extends JpaRepository<Policy, Long> {
 
-    List<Policy> findByPolicyTypeIgnoreCase(String policyType);
-
+    List<Policy> findByPolicyType(String policyType);
 
 }
