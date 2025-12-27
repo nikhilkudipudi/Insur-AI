@@ -4,11 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import PrivacySVG from '../assets/privacy.svg';
 import { login } from "../api/authService";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
+import toast from 'react-hot-toast';
 
 
 export default function Login() {
- 
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -19,44 +20,45 @@ export default function Login() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  // setLoading(true);
+    e.preventDefault();
+    // setLoading(true);
 
-  try {
-    const res = await login(formData);
+    try {
+      const res = await login(formData);
 
-    if (!res.ok) {
-      alert(res.data || "Invalid credentials! Please try again.");
+      if (!res.ok) {
+        const errorMessage = res.data?.message || (typeof res.data === 'string' ? res.data : "Invalid credentials! Please try again.");
+        toast.error(errorMessage);
         // setLoading(false);
-      return;
+        return;
+      }
+
+      const token = res.data.token;
+      localStorage.setItem("token", token);
+      const decoded = jwtDecode(token);
+
+      console.log("Decoded token:", decoded);
+
+      // Example: redirect by role (assuming JWT includes role)
+      const role = decoded.role || "USER";
+      toast.success("Login successful!");
+
+      if (role === "ADMIN") {
+        navigate("/admin", { replace: true }); // ✅ replace history
+      } else {
+        navigate("/user", { replace: true }); // ✅ replace history
+      }
+
     }
 
-    const token = res.data.token;
-     localStorage.setItem("token", token);
-    const decoded = jwtDecode(token);
-
-    console.log("Decoded token:", decoded);
-
-    // Example: redirect by role (assuming JWT includes role)
-    const role = decoded.role || "USER";
-       alert("Login successful!");
-
-    if (role === "ADMIN") {
-  navigate("/admin", { replace: true }); // ✅ replace history
-} else {
-  navigate("/user", { replace: true }); // ✅ replace history
-}
-
-}
-    
-   catch (error) {
-    console.error("Login error:", error);
-    alert("Something went wrong during login.");
-  }
-  // finally {
-  //     setLoading(false);
-  //   }
-};
+    catch (error) {
+      console.error("Login error:", error);
+      toast.error("Something went wrong during login.");
+    }
+    // finally {
+    //     setLoading(false);
+    //   }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-green-100 p-4">
@@ -71,20 +73,20 @@ export default function Login() {
           <h2 className="text-2xl font-bold mb-1">
             {"Welcome Back"}
           </h2>
-          
+
         </div>
 
         {/* Right Section */}
         <div className="flex-1 flex flex-col justify-center px-8 py-10">
           <h2 className="text-3xl font-bold text-green-700 mb-4 text-center flex items-center justify-center gap-2">
             <LogIn className="w-5 h-5 text-green-600" />{" "}
-            { "Login to InsurAI"}
+            {"Login to InsurAI"}
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-gray-700 font-semibold mb-1">
-                { "Email"}
+                {"Email"}
               </label>
               <input
                 type="email"
@@ -99,7 +101,7 @@ export default function Login() {
 
             <div>
               <label className="block text-gray-700 font-semibold mb-1">
-                { "Password"}
+                {"Password"}
               </label>
               <div className="relative">
                 <input
@@ -125,17 +127,17 @@ export default function Login() {
               type="submit"
               className="w-full bg-green-600 text-white font-semibold py-2.5 rounded-lg shadow hover:bg-green-700 hover:shadow-lg transform hover:-translate-y-0.5 transition-all"
             >
-              { "Login"}
+              {"Login"}
             </button>
           </form>
 
           <p className="text-sm text-center mt-5 text-gray-600">
-            { "Don't have an account?"}{" "}
+            {"Don't have an account?"}{" "}
             <button
               onClick={() => navigate("/signup")}
               className="text-green-600 font-semibold hover:underline"
             >
-              { "Sign Up"}
+              {"Sign Up"}
             </button>
           </p>
         </div>

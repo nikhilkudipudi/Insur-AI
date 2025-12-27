@@ -1,5 +1,6 @@
 // src/pages/admin/ManagePolicies/AddNewPolicy.jsx
 import { useState } from "react";
+import toast from 'react-hot-toast';
 import { motion } from "framer-motion";
 import { PlusCircle, FileText, DollarSign, Calendar, Layers } from "lucide-react";
 import { addPolicy } from "../../../api/authService";
@@ -38,7 +39,7 @@ export default function AddNewPolicy() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!policyType || !segment) {
-      alert("Invalid policy category (URL).");
+      toast.error("Invalid policy category (URL).");
       return;
     }
 
@@ -54,10 +55,10 @@ export default function AddNewPolicy() {
     setLoading(false);
 
     if (res.ok) {
-      alert("Policy added successfully.");
+      toast.success("Policy added successfully.");
       navigate(`/admin/manage-policies/${segment}/view`);
     } else {
-      alert("Failed to add policy: " + (res.data || "Unknown error"));
+      toast.error("Failed to add policy: " + (res.data || "Unknown error"));
     }
   };
 

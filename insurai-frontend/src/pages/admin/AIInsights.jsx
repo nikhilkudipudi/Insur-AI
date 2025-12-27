@@ -123,7 +123,7 @@ export default function AIInsights() {
             className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100"
           >
             <h3 className="text-xl font-bold text-gray-800 mb-6">Claims Status Distribution</h3>
-            <div className="h-80">
+            <div className="w-full h-80" style={{ minHeight: '320px' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -155,7 +155,7 @@ export default function AIInsights() {
             className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100"
           >
             <h3 className="text-xl font-bold text-gray-800 mb-6">Popular Policy Types</h3>
-            <div className="h-80">
+            <div className="w-full h-80" style={{ minHeight: '320px' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={policyData}>
                   <CartesianGrid strokeDasharray="3 3" />

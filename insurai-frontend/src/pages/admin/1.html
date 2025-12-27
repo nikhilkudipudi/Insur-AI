@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloomID - Flower Identification</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-seedling"></i>
+                <span>BloomID</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#identify">Identify</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+            <button class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Discover the Beauty of Nature</h1>
+            <p>Identify flowers instantly with our AI-powered recognition system</p>
+            <a href="#identify" class="cta-button">Identify a Flower <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="hero-image">
+            <div class="flower-card">
+                <img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Sample Flower">
+                <div class="flower-info">
+                    <h3>Rose</h3>
+                    <p>Rosa · Rosaceae family</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Identification Section -->
+    <section id="identify" class="identification-section">
+        <h2 class="section-title">Identify Your Flower</h2>
+        
+        <div class="upload-container">
+            <!-- Upload Area -->
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h3>Upload Flower Image</h3>
+                <p>Drag & drop or click to browse</p>
+                <p class="file-types">Supports: JPG, PNG, WEBP (Max 5MB)</p>
+                <input type="file" id="imageInput" accept="image/*" hidden>
+                <button class="upload-btn" id="uploadBtn">Choose File</button>
+            </div>
+
+            <!-- Preview Area -->
+            <div class="preview-area">
+                <div class="image-preview" id="imagePreview">
+                    <img id="previewImage" src="" alt="Preview">
+                    <div class="preview-placeholder">
+                        <i class="fas fa-image"></i>
+                        <p>Image preview will appear here</p>
+                    </div>
+                </div>
+                
+                <!-- Capture Option -->
+                <div class="capture-option">
+                    <button class="camera-btn" id="cameraBtn">
+                        <i class="fas fa-camera"></i> Use Camera
+                    </button>
+                    <p class="or-text">or</p>
+                    <button class="sample-btn" id="sampleBtn">
+                        <i class="fas fa-vial"></i> Try Sample Image
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <h3>Identification Results</h3>
+            <div class="results-container">
+                <div class="loading-spinner" id="loadingSpinner">
+                    <div class="spinner"></div>
+                    <p>Analyzing flower patterns...</p>
+                </div>
+                
+                <div class="results-content" id="resultsContent">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery-section">
+        <h2 class="section-title">Flower Gallery</h2>
+        <div class="gallery-container" id="flowerGallery">
+            <!-- Gallery items will be populated by JavaScript -->
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="about-content">
+            <h2 class="section-title">About BloomID</h2>
+            <p>BloomID uses advanced machine learning algorithms to identify over 10,000 flower species with 95% accuracy. Our system analyzes petal patterns, colors, and morphological features to provide accurate identifications.</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-robot"></i>
+                    <h3>AI-Powered</h3>
+                    <p>State-of-the-art neural networks</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-database"></i>
+                    <h3>Extensive Database</h3>
+                    <p>10,000+ flower species</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>Mobile Friendly</h3>
+                    <p>Works on all devices</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Fast Results</h3>
+                    <p>Identifies in under 3 seconds</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-seedling"></i>
+                <span>BloomID</span>
+            </div>
+            <p class="footer-tagline">Connecting people with nature through technology</p>
+            <div class="footer-links">
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+            <p class="copyright">© 2024 BloomID. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Camera Modal -->
+    <div class="modal" id="cameraModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Capture Flower Image</h3>
+            <div class="camera-container">
+                <video id="cameraFeed" autoplay></video>
+                <canvas id="cameraCanvas" style="display: none;"></canvas>
+            </div>
+            <div class="camera-controls">
+                <button id="captureBtn" class="capture-btn">
+                    <i class="fas fa-camera"></i> Capture
+                </button>
+                <button id="switchCamera" class="switch-btn">
+                    <i class="fas fa-sync-alt"></i> Switch Camera
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

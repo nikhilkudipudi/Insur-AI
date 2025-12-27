@@ -12,4 +12,6 @@ public interface PolicyApplicationRepository extends JpaRepository<PolicyApplica
     List<PolicyApplication> findByUser(UserDetails user);
 
     List<PolicyApplication> findByStatus(String status);
+
+    List<PolicyApplication> findByPolicy(com.insurai.insurai_backend.entity.Policy policy);
 }

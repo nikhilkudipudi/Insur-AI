@@ -6,7 +6,7 @@ import SignUp from "../assets/SignUp.gif";
 import { signup } from "../api/authService";
 
 export default function Signup() {
-  
+
   const navigate = useNavigate();
 
   // ✅ Only fields you actually have
@@ -23,27 +23,27 @@ export default function Signup() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const { ok, data } = await signup({
-      fullName: formData.fullName,
-      email: formData.email,
-      password: formData.password,
-    });
+    try {
+      const { ok, data } = await signup({
+        fullName: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+      });
 
-    if (ok) {
-      // backend returns plain string success message
-      alert(typeof data === "string" ? data : "Signup successful!");
-      navigate("/login");
-    } else {
-      alert(typeof data === "string" ? data : "Signup failed!");
+      if (ok) {
+        // backend returns plain string success message
+        alert(typeof data === "string" ? data : "Signup successful!");
+        navigate("/login");
+      } else {
+        alert(typeof data === "string" ? data : "Signup failed!");
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert("Something went wrong during signup.");
     }
-  } catch (error) {
-    console.error("Signup error:", error);
-    alert("Something went wrong during signup.");
-  }
-};
+  };
 
 
   return (
@@ -80,10 +80,12 @@ export default function Signup() {
               />
             </div>
 
+
+
             {/* Email */}
             <div>
               <label className="block text-gray-700 font-medium mb-1 text-sm">
-                { "Email"}
+                {"Email"}
               </label>
               <input
                 type="email"
@@ -99,7 +101,7 @@ export default function Signup() {
             {/* Password */}
             <div>
               <label className="block text-gray-700 font-medium mb-1 text-sm">
-                { "Password"}
+                {"Password"}
               </label>
               <div className="relative">
                 <input
@@ -108,7 +110,7 @@ export default function Signup() {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                 
+
                   className="w-full border border-green-300 rounded-md px-3 py-2 pr-8 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none transition"
                 />
                 <button
@@ -126,17 +128,17 @@ export default function Signup() {
               type="submit"
               className="w-full bg-green-600 text-white font-semibold py-2 rounded-md shadow hover:bg-green-700 hover:shadow-md text-sm transition"
             >
-              { "Sign Up"}
+              {"Sign Up"}
             </button>
           </form>
 
           <p className="text-xs text-center mt-4 text-gray-600">
-            { "Already have an account?"}{" "}
+            {"Already have an account?"}{" "}
             <button
               onClick={() => navigate("/login")}
               className="text-green-600 font-semibold hover:underline"
             >
-              { "Login"}
+              {"Login"}
             </button>
           </p>
         </div>

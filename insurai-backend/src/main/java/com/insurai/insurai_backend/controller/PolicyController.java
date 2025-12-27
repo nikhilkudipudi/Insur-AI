@@ -1,6 +1,5 @@
 package com.insurai.insurai_backend.controller;
 
-
 import com.insurai.insurai_backend.dto.UpdateOrDeletePolicyRequest;
 import com.insurai.insurai_backend.entity.Policy;
 import com.insurai.insurai_backend.service.PolicyService;
@@ -13,7 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/policies")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class PolicyController {
 
     private final PolicyService policyService;
@@ -34,7 +32,6 @@ public class PolicyController {
         return ResponseEntity.ok(policyService.getAllPolicies());
     }
 
-
     // ---------------------------
     // ADD NEW POLICY
     // ---------------------------
@@ -48,7 +45,11 @@ public class PolicyController {
     // ---------------------------
     @PutMapping("/update")
     public ResponseEntity<?> updatePolicy(@RequestBody UpdateOrDeletePolicyRequest req) {
-        return ResponseEntity.ok(policyService.updatePolicy(req));
+        try {
+            return ResponseEntity.ok(policyService.updatePolicy(req));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // ---------------------------
@@ -56,6 +57,10 @@ public class PolicyController {
     // ---------------------------
     @PostMapping("/delete")
     public ResponseEntity<?> deletePolicy(@RequestBody UpdateOrDeletePolicyRequest req) {
-        return ResponseEntity.ok(policyService.deletePolicy(req));
+        try {
+            return ResponseEntity.ok(policyService.deletePolicy(req));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

@@ -4,9 +4,10 @@
 // ================================
 //  API BASE URLS
 // ================================
-const AUTH_BASE = "http://localhost:8080/api/auth";
-const POLICY_BASE = "http://localhost:8080/api/admin/policies";
-const USER_POLICY_BASE = "http://localhost:8080/api/user/browse-policies";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+const AUTH_BASE = `${API_URL}/api/auth`;
+const POLICY_BASE = `${API_URL}/api/admin/policies`;
+const USER_POLICY_BASE = `${API_URL}/api/user/browse-policies`;
 
 // ================================
 //  Helper to parse backend responses
@@ -49,6 +50,7 @@ export async function signup(formData) {
     fullName: formData.fullName,
     email: formData.email,
     password: formData.password,
+
   };
   const res = await fetch(`${AUTH_BASE}/signup`, {
     method: "POST",
@@ -206,7 +208,7 @@ export async function getUserPoliciesByType(typeOrSegment) {
 //  POLICY APPLICATION ENDPOINTS
 // ================================
 export async function applyForPolicy(policyId) {
-  const res = await fetch(`http://localhost:8080/api/user/apply`, {
+  const res = await fetch(`${API_URL}/api/user/apply`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -218,7 +220,7 @@ export async function applyForPolicy(policyId) {
 }
 
 export async function getAllApplications() {
-  const res = await fetch(`http://localhost:8080/api/admin/applications`, {
+  const res = await fetch(`${API_URL}/api/admin/applications`, {
     headers: {
       "Content-Type": "application/json",
       ...authHeader(),
@@ -228,7 +230,7 @@ export async function getAllApplications() {
 }
 
 export async function updateApplicationStatus(applicationId, status) {
-  const res = await fetch(`http://localhost:8080/api/admin/applications/status`, {
+  const res = await fetch(`${API_URL}/api/admin/applications/status`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -240,7 +242,7 @@ export async function updateApplicationStatus(applicationId, status) {
 }
 
 export async function getMyApplications() {
-  const res = await fetch(`http://localhost:8080/api/user/my-applications`, {
+  const res = await fetch(`${API_URL}/api/user/my-applications`, {
     headers: {
       "Content-Type": "application/json",
       ...authHeader(),
@@ -253,7 +255,7 @@ export async function getMyApplications() {
 //  CLAIMS ENDPOINTS
 // ================================
 export async function fileClaim(claimData) {
-  const res = await fetch(`http://localhost:8080/api/user/claims`, {
+  const res = await fetch(`${API_URL}/api/user/claims`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -265,7 +267,7 @@ export async function fileClaim(claimData) {
 }
 
 export async function getMyClaims() {
-  const res = await fetch(`http://localhost:8080/api/user/claims`, {
+  const res = await fetch(`${API_URL}/api/user/claims`, {
     headers: {
       "Content-Type": "application/json",
       ...authHeader(),
@@ -276,7 +278,7 @@ export async function getMyClaims() {
 
 // Admin: Get all claims
 export async function getAllClaims() {
-  const res = await fetch(`http://localhost:8080/api/user/claims/admin/all`, {
+  const res = await fetch(`${API_URL}/api/user/claims/admin/all`, {
     headers: {
       "Content-Type": "application/json",
       ...authHeader(),
@@ -287,7 +289,7 @@ export async function getAllClaims() {
 
 // Admin: Update claim status
 export async function updateClaimStatus(claimId, status) {
-  const res = await fetch(`http://localhost:8080/api/user/claims/admin/status`, {
+  const res = await fetch(`${API_URL}/api/user/claims/admin/status`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -300,7 +302,7 @@ export async function updateClaimStatus(claimId, status) {
 
 // Admin: Get Settings
 export async function getSettings() {
-  const res = await fetch(`http://localhost:8080/api/admin/settings`, {
+  const res = await fetch(`${API_URL}/api/admin/settings`, {
     headers: {
       "Content-Type": "application/json",
       ...authHeader(),
@@ -311,7 +313,7 @@ export async function getSettings() {
 
 // Admin: Update Settings
 export async function updateSettings(settings) {
-  const res = await fetch(`http://localhost:8080/api/admin/settings/update`, {
+  const res = await fetch(`${API_URL}/api/admin/settings/update`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -322,9 +324,9 @@ export async function updateSettings(settings) {
   return parseResponse(res);
 }
 
-// Admin: Update Password
+// Update Password (USER)
 export async function updatePassword(passwords) {
-  const res = await fetch(`http://localhost:8080/api/admin/settings/password`, {
+  const res = await fetch(`${API_URL}/api/user/profile/password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -337,7 +339,7 @@ export async function updatePassword(passwords) {
 
 // Admin: Verify Password (for critical actions)
 export async function verifyPassword(password) {
-  const res = await fetch(`http://localhost:8080/api/admin/settings/verify-password`, {
+  const res = await fetch(`${API_URL}/api/admin/settings/verify-password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -350,11 +352,33 @@ export async function verifyPassword(password) {
 
 // Admin: Get Analytics
 export async function getAnalytics() {
-  const res = await fetch(`http://localhost:8080/api/admin/analytics`, {
+  const res = await fetch(`${API_URL}/api/admin/analytics`, {
     headers: {
       "Content-Type": "application/json",
       ...authHeader(),
     },
+  });
+  return parseResponse(res);
+}
+// User Profile
+export async function getUserProfile() {
+  const res = await fetch(`${API_URL}/api/user/profile`, {
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeader(),
+    },
+  });
+  return parseResponse(res);
+}
+
+export async function updateUserProfile(profileData) {
+  const res = await fetch(`${API_URL}/api/user/profile/update`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeader(),
+    },
+    body: JSON.stringify(profileData),
   });
   return parseResponse(res);
 }

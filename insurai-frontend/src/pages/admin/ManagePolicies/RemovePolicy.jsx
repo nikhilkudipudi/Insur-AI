@@ -1,5 +1,6 @@
 // src/pages/admin/ManagePolicies/RemovePolicy.jsx
 import { useEffect, useState } from "react";
+import toast from 'react-hot-toast';
 import { Trash2, Lock, XCircle, CheckCircle, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getPoliciesByType, deletePolicy, getSettings, verifyPassword } from "../../../api/authService";
@@ -50,20 +51,14 @@ export default function RemovePolicy() {
   }, []);
 
   const showStatus = (type, message) => {
-    setStatusPopup({ show: true, type, message });
-    setTimeout(() => setStatusPopup({ ...statusPopup, show: false }), 3000);
+    if (type === 'success') toast.success(message);
+    else toast.error(message);
   };
 
   const openModal = (policy) => {
     setSelected(policy);
-    if (requirePassword) {
-      setAdminPassword("");
-      setShowModal(true);
-    } else {
-      if (confirm(`Are you sure you want to delete ${policy.policyName}?`)) {
-        performDelete(policy.id, "");
-      }
-    }
+    setAdminPassword("");
+    setShowModal(true);
   };
 
   const performDelete = async (id, password) => {
@@ -73,22 +68,24 @@ export default function RemovePolicy() {
     if (res.ok) {
       setPolicies(prev => prev.filter(p => p.id !== id));
       setShowModal(false);
-      showStatus('success', "Policy deleted successfully.");
+      toast.success("Policy deleted successfully.");
     } else {
-      showStatus('error', res.data || "Delete failed.");
+      toast.error(res.data || "Delete failed.");
     }
   };
 
   const confirmDelete = async () => {
-    if (!adminPassword) {
-      showStatus('error', "Enter admin password.");
-      return;
-    }
+    if (requirePassword) {
+      if (!adminPassword) {
+        toast.error("Enter admin password.");
+        return;
+      }
 
-    const verifyRes = await verifyPassword(adminPassword);
-    if (!verifyRes.ok) {
-      showStatus('error', "Incorrect password!");
-      return;
+      const verifyRes = await verifyPassword(adminPassword);
+      if (!verifyRes.ok) {
+        toast.error("Incorrect password!");
+        return;
+      }
     }
 
     performDelete(selected.id, adminPassword);
@@ -144,54 +141,19 @@ export default function RemovePolicy() {
 
               <div className="flex flex-col items-center text-center">
                 <Lock className={`w-10 h-10 ${theme.text} mb-3`} />
-                <h2 className={`text-2xl font-bold ${theme.text} mb-2`}>Confirm Admin Identity</h2>
-                <p className="text-gray-600 mb-6">Enter admin password to delete <span className={`font-semibold ${theme.text}`}>{selected?.policyName}</span></p>
-                <input type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} className={`w-full border ${theme.border} rounded-lg p-3 outline-none focus:ring-2 ${theme.ring}`} />
+                <h2 className={`text-2xl font-bold ${theme.text} mb-2`}>{requirePassword ? "Confirm Admin Identity" : "Confirm Deletion"}</h2>
+                <p className="text-gray-600 mb-6">{requirePassword ? "Enter admin password to delete" : "Are you sure you want to delete"} <span className={`font-semibold ${theme.text}`}>{selected?.policyName}</span>?</p>
+
+                {requirePassword && (
+                  <input type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} className={`w-full border ${theme.border} rounded-lg p-3 outline-none focus:ring-2 ${theme.ring}`} placeholder="Admin Password" />
+                )}
+
                 <div className="flex justify-end gap-3 mt-6 w-full">
                   <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
                   <button onClick={confirmDelete} disabled={actionLoading} className="px-4 py-2 bg-red-600 text-white rounded-lg">{actionLoading ? "Deleting..." : "Confirm Delete"}</button>
                 </div>
               </div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Status Popup */}
-      <AnimatePresence>
-        {statusPopup.show && (
-          <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 50, opacity: 0 }}
-            className="fixed bottom-10 right-10 z-50"
-          >
-            <div className={`flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl border ${statusPopup.type === 'success'
-                ? 'bg-white border-green-100 text-green-800'
-                : 'bg-white border-red-100 text-red-800'
-              }`}>
-              {statusPopup.type === 'success' ? (
-                <div className="bg-green-100 p-2 rounded-full">
-                  <CheckCircle className="w-6 h-6 text-green-600" />
-                </div>
-              ) : (
-                <div className="bg-red-100 p-2 rounded-full">
-                  <AlertCircle className="w-6 h-6 text-red-600" />
-                </div>
-              )}
-              <div>
-                <h4 className="font-bold text-lg">
-                  {statusPopup.type === 'success' ? 'Success' : 'Error'}
-                </h4>
-                <p className="text-sm opacity-90">{statusPopup.message}</p>
-              </div>
-              <button
-                onClick={() => setStatusPopup({ ...statusPopup, show: false })}
-                className="ml-4 text-gray-400 hover:text-gray-600"
-              >
-                <XCircle className="w-5 h-5" />
-              </button>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,7 +1,8 @@
-import { useTranslation } from "react-i18next";
+
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Headphones, UserCheck, Brain } from "lucide-react";
+import { isAuthenticated } from "../utils/auth";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 // ✅ Import GIFs from assets
@@ -11,7 +12,7 @@ import PropertyGif from "../assets/Property.gif";
 import CommercialGif from "../assets/Commercial.gif";
 
 export default function Home() {
-  const { t } = useTranslation();
+
   const [selected, setSelected] = useState(null);
   const [showChatbot, setShowChatbot] = useState(false);
   const location = useLocation();
@@ -21,34 +22,38 @@ export default function Home() {
   const features = [
     {
       id: 1,
-      title: t("lifeInsurance") || "Life Insurance",
+      title: "Life Insurance",
       description:
-      
+
         "Protect your loved ones with smart life coverage.",
       bg: LifeGif,
+      route: "/user/browse-policies/life-insurance",
     },
     {
       id: 2,
-      title: t("healthInsurance") || "Health Insurance",
+      title: "Health Insurance",
       description:
-       
+
         "Comprehensive health coverage with instant claim support.",
       bg: HealthGif,
+      route: "/user/browse-policies/health-insurance",
     },
     {
       id: 3,
-      title: t("propertyInsurance") || "Property & Casualty",
+      title: "Property & Casualty",
       description:
         "Safeguard your assets against unforeseen losses.",
       bg: PropertyGif,
+      route: "/user/browse-policies/property-casualty",
     },
     {
       id: 4,
-      title: t("commercialInsurance") || "Commercial Insurance",
+      title: "Commercial Insurance",
       description:
-       
+
         "Empower your business with reliable commercial protection.",
       bg: CommercialGif,
+      route: "/user/browse-policies/commercial-insurance",
     },
   ];
 
@@ -125,7 +130,7 @@ export default function Home() {
         className="bg-gradient-to-b from-green-50 via-white to-green-100 py-20 px-6"
       >
         <h2 className="text-4xl md:text-5xl font-extrabold text-center text-green-700 mb-16 tracking-tight">
-          {t("featuresTitle") || "Our Core Insurance Plans"}
+          Our Core Insurance Plans
         </h2>
 
         <div className="max-w-6xl mx-auto space-y-16">
@@ -135,9 +140,8 @@ export default function Home() {
               onClick={() =>
                 setSelected(feature.id === selected ? null : feature.id)
               }
-              className={`relative flex flex-col md:flex-row items-center gap-10 md:gap-16 p-8 bg-white rounded-3xl shadow-lg border border-green-200 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] overflow-hidden ${
-                index % 2 === 1 ? "md:flex-row-reverse" : ""
-              } ${selected === feature.id ? "ring-4 ring-green-400" : ""}`}
+              className={`relative flex flex-col md:flex-row items-center gap-10 md:gap-16 p-8 bg-white rounded-3xl shadow-lg border border-green-200 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] overflow-hidden ${index % 2 === 1 ? "md:flex-row-reverse" : ""
+                } ${selected === feature.id ? "ring-4 ring-green-400" : ""}`}
             >
               {/* ✅ Background GIF */}
               <div
@@ -155,10 +159,17 @@ export default function Home() {
                 </p>
 
                 <button
-                  onClick={() => navigate("/login")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (isAuthenticated()) {
+                      navigate(feature.route);
+                    } else {
+                      navigate("/login");
+                    }
+                  }}
                   className="mt-6 inline-flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-lg font-medium shadow-md hover:bg-green-700 hover:shadow-lg transition-all"
                 >
-                  {t("learnMore") || "Learn More"}
+                  Learn More
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="w-4 h-4"
@@ -190,27 +201,23 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {/* Item 1 */}
             <div className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 flex flex-col items-center text-center border border-green-100">
-              <img
-                src="/support.svg"
-                alt="24/7 Support"
-                className="w-20 h-20 mb-6"
-              />
+              <div className="w-20 h-20 mb-6 flex items-center justify-center bg-green-100 rounded-full">
+                <Headphones className="w-12 h-12 text-green-600" strokeWidth={1.5} />
+              </div>
               <h3 className="text-2xl font-semibold text-green-700 mb-2">
                 24/7 Customer Support
               </h3>
               <p className="text-gray-600">
-                We’re always here for you. Get round-the-clock assistance for
+                We're always here for you. Get round-the-clock assistance for
                 your policies, claims, and queries.
               </p>
             </div>
 
             {/* Item 2 */}
             <div className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 flex flex-col items-center text-center border border-green-100">
-              <img
-                src="/agent-help.svg"
-                alt="Expert Agents"
-                className="w-20 h-20 mb-6"
-              />
+              <div className="w-20 h-20 mb-6 flex items-center justify-center bg-green-100 rounded-full">
+                <UserCheck className="w-12 h-12 text-green-600" strokeWidth={1.5} />
+              </div>
               <h3 className="text-2xl font-semibold text-green-700 mb-2">
                 Dedicated Agent Assistance
               </h3>
@@ -222,11 +229,9 @@ export default function Home() {
 
             {/* Item 3 */}
             <div className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 flex flex-col items-center text-center border border-green-100">
-              <img
-                src="/ai-insights.svg"
-                alt="AI Insights"
-                className="w-20 h-20 mb-6"
-              />
+              <div className="w-20 h-20 mb-6 flex items-center justify-center bg-green-100 rounded-full">
+                <Brain className="w-12 h-12 text-green-600" strokeWidth={1.5} />
+              </div>
               <h3 className="text-2xl font-semibold text-green-700 mb-2">
                 Smart AI Insights
               </h3>
@@ -240,15 +245,7 @@ export default function Home() {
       </section>
 
       {/* 💬 Floating Chatbot Button */}
-      {showChatbot && (
-        <button
-          onClick={() => alert("AI Chatbot Coming Soon 🤖")}
-          className="fixed bottom-24 right-6 bg-green-600 text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-2 hover:bg-green-700 transition-all z-50"
-        >
-          <MessageCircle size={22} />
-          <span className="font-semibold">Help!?</span>
-        </button>
-      )}
+
     </div>
   );
 }

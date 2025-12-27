@@ -12,4 +12,6 @@ public interface ClaimRepository extends JpaRepository<Claim, Long> {
     List<Claim> findByUser(UserDetails user);
 
     List<Claim> findByUserOrderBySubmittedDateDesc(UserDetails user);
+
+    List<Claim> findByPolicy(com.insurai.insurai_backend.entity.Policy policy);
 }

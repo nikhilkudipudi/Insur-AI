@@ -1,24 +1,17 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getSettings } from '../api/authService';
 
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-    const [theme, setTheme] = useState('light');
+    const [theme, setTheme] = useState(() => {
+        // Load theme from localStorage on initial render
+        return localStorage.getItem('theme') || 'light';
+    });
 
+    // Save theme to localStorage whenever it changes
     useEffect(() => {
-        // Load theme from backend or local storage on mount
-        const loadTheme = async () => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                const res = await getSettings();
-                if (res.ok && res.data.theme) {
-                    setTheme(res.data.theme);
-                }
-            }
-        };
-        loadTheme();
-    }, []);
+        localStorage.setItem('theme', theme);
+    }, [theme]);
 
     // Apply theme to document body
     useEffect(() => {

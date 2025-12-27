@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { User } from "lucide-react";
-import { isAuthenticated, getUserRole, logoutUser } from "../utils/auth";
+import { isAuthenticated, getUserRole } from "../utils/auth";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -36,9 +36,6 @@ export default function Navbar() {
     }
   };
 
-  const handleLogout = () => {
-    logoutUser(); // clears token + redirects to /login
-  };
 
   // navigation buttons (shown only if NOT logged in)
   const buttons = [
@@ -126,10 +123,13 @@ export default function Navbar() {
                 )}
 
                 <button
-                  onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-green-100 rounded-lg"
+                  onClick={() => {
+                    setShowMenu(false);
+                    navigate("/user/profile");
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-green-100 rounded-lg"
                 >
-                  Logout
+                  Profile
                 </button>
               </div>
             )}

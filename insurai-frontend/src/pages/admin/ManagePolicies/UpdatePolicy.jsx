@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from 'react-hot-toast';
 import { Edit, Lock, XCircle } from "lucide-react";
 import { getPoliciesByType, updatePolicy, verifyPassword } from "../../../api/authService";
 import { usePolicyType } from "../../../hooks/usePolicyType";
@@ -45,11 +46,11 @@ export default function UpdatePolicy() {
   };
 
   const verify = async () => {
-    if (!adminPassword) { alert("Enter admin password"); return; }
+    if (!adminPassword) { toast.error("Enter admin password"); return; }
 
     const verifyRes = await verifyPassword(adminPassword);
     if (!verifyRes.ok) {
-      alert("Incorrect password!");
+      toast.error("Incorrect password!");
       return;
     }
 
@@ -84,9 +85,9 @@ export default function UpdatePolicy() {
       setEditing(false);
       setEditModel(null);
       setSelected(null);
-      alert("Policy updated.");
+      toast.success("Policy updated.");
     } else {
-      alert(res.data || "Update failed.");
+      toast.error(res.data || "Update failed.");
     }
   };
 

@@ -36,8 +36,9 @@ export default function PolicyList() {
         // Map slug to canonical API type (e.g., 'health-insurance' -> 'HEALTH')
         const apiType = mapSlugToType(policyType);
 
+        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
         // This URL maps directly to your backend controller path: /api/user/browse-policies/{policyType}
-        const response = await fetch(`http://localhost:8080/api/user/browse-policies/${apiType}`);
+        const response = await fetch(`${API_URL}/api/user/browse-policies/${apiType}`);
 
         if (!response.ok) {
           throw new Error(`Failed to fetch policies: ${response.statusText}`);

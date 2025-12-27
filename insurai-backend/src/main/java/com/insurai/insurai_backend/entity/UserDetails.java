@@ -24,6 +24,7 @@ public class UserDetails {
 
     // Settings Fields
     private boolean requirePasswordForActions = true;
+    private boolean notificationsEnabled = true;
     private String theme = "light";
     private java.time.LocalDateTime lastLogin;
 
@@ -98,5 +99,13 @@ public class UserDetails {
 
     public void setLastLogin(java.time.LocalDateTime lastLogin) {
         this.lastLogin = lastLogin;
+    }
+
+    public boolean isNotificationsEnabled() {
+        return notificationsEnabled;
+    }
+
+    public void setNotificationsEnabled(boolean notificationsEnabled) {
+        this.notificationsEnabled = notificationsEnabled;
     }
 }

@@ -39,5 +39,4 @@ public class SignUpRequest {
         this.password = password;
     }
 
-
 }

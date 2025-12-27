@@ -16,16 +16,9 @@ export function usePolicyType() {
   const typeMap = {
     "health-insurance": "HEALTH",
     "life-insurance": "LIFE",
-    "property-casualty": "PROPERTY",
+    "property-casualty-insurance": "PROPERTY",
     "commercial-insurance": "COMMERCIAL",
-    "healthInsurance": "HEALTH",
-    "lifeInsurance": "LIFE",
-    "propertyCasualtyInsurance": "PROPERTY",
-    "commercialInsurance": "COMMERCIAL",
-    "health": "HEALTH",
-    "life": "LIFE",
-    "property": "PROPERTY",
-    "commercial": "COMMERCIAL",
+  
   };
 
   const policyType = segment ? (typeMap[segment] || segment.toUpperCase()) : null;

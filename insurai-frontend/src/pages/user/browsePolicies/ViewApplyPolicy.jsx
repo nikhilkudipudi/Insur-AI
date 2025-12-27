@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import toast from 'react-hot-toast';
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -50,20 +51,44 @@ export default function ViewApplyPolicy() {
         fetchPolicy();
     }, [category, policyId]);
 
-    const handleApply = async () => {
-        if (!policy) return;
-        if (!confirm(`Are you sure you want to apply for ${policy.policyName}?`)) return;
-
+    const executeApply = async () => {
         setApplying(true);
         const res = await applyForPolicy(policy.id);
         setApplying(false);
 
         if (res.ok) {
-            alert("Application submitted successfully! You can track it in your dashboard.");
+            toast.success("Application submitted successfully! Check your dashboard.");
             navigate("/user/browse-policies");
         } else {
-            alert("Failed to apply: " + (res.data || "Unknown error"));
+            toast.error("Failed to apply: " + (res.data || "Unknown error"));
         }
+    };
+
+    const handleApply = () => {
+        if (!policy) return;
+
+        toast((t) => (
+            <div className="flex flex-col gap-2">
+                <span className="font-semibold text-gray-800">Apply for {policy.policyName}?</span>
+                <div className="flex gap-2 justify-end">
+                    <button
+                        className="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300 transition"
+                        onClick={() => toast.dismiss(t.id)}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        className="px-3 py-1 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 transition shadow-sm"
+                        onClick={() => {
+                            toast.dismiss(t.id);
+                            executeApply();
+                        }}
+                    >
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        ), { duration: 5000, icon: '📋' });
     };
 
     if (loading) {

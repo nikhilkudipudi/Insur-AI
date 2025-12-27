@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FileText,
@@ -10,9 +10,26 @@ import {
   LifeBuoy,
 } from "lucide-react";
 
+import { getUserProfile } from "../../api/authService";
+
 export default function UserDashboard() {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("overview");
+  const [user, setUser] = useState({ fullName: "InsurAI User", email: "", phoneNumber: "" });
+
+  useEffect(() => {
+    async function fetchUser() {
+      const res = await getUserProfile();
+      if (res.ok && res.data) {
+        setUser({
+          fullName: res.data.fullName || "InsurAI User",
+          email: res.data.email || "",
+          phoneNumber: res.data.phoneNumber || ""
+        });
+      }
+    }
+    fetchUser();
+  }, []);
 
   const menuItems = [
     {
@@ -78,11 +95,14 @@ export default function UserDashboard() {
       {/* Sidebar */}
       <aside className="w-64 bg-white text-green-800 flex flex-col shadow-2xl border-r border-green-100">
         <div className="p-6 border-b border-green-100">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 mb-2">
             <div className="bg-green-50 text-green-700 p-2 rounded-lg">
               <User className="w-6 h-6" />
             </div>
-            <h1 className="text-xl font-bold tracking-wide text-green-800">InsurAI User</h1>
+            <div>
+              <h1 className="text-lg font-bold tracking-wide text-green-800 leading-tight">{user.fullName}</h1>
+              <p className="text-xs text-green-600 font-medium">User Dashboard</p>
+            </div>
           </div>
         </div>
 
@@ -92,8 +112,8 @@ export default function UserDashboard() {
               key={item.id}
               onClick={() => handleNavigation(item)}
               className={`flex items-center w-full gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-left ${activeSection === item.id
-                  ? "bg-green-600 text-white shadow-md font-semibold scale-105"
-                  : "text-green-700 hover:bg-green-50 hover:scale-[1.02]"
+                ? "bg-green-600 text-white shadow-md font-semibold scale-105"
+                : "text-green-700 hover:bg-green-50 hover:scale-[1.02]"
                 }`}
             >
               {item.icon}
@@ -120,7 +140,7 @@ export default function UserDashboard() {
               "Dashboard Overview"}
           </h2>
           <div className="bg-white shadow-lg border border-gray-100 px-4 py-2 rounded-full text-sm text-gray-700">
-            Welcome back, <span className="font-bold">User</span>!
+            Welcome back, <span className="font-bold">{user.fullName}</span>!
           </div>
         </div>
 

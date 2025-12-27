@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Features from "./components/Features";
+import HelpButton from "./components/HelpButton";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import UserDashboard from "./pages/user/UserDashboard";
@@ -28,6 +29,8 @@ import ViewApplyPolicy from './pages/user/browsePolicies/ViewApplyPolicy';
 import UserManagePolicies from './pages/user/ManagePolicies';
 import FileClaims from './pages/user/FileClaims';
 import TrackClaims from './pages/user/TrackClaims';
+import Support from './pages/user/Support';
+import Profile from './pages/user/Profile';
 
 import Customers from "./pages/admin/Customers";
 import Claims from "./pages/admin/Claims";
@@ -129,7 +132,8 @@ function AppContent() {
           <Route path="/user/file-claims" element={<FileClaims />} />
           <Route path="/user/track-claims" element={<TrackClaims />} />
           <Route path="/user/billing" element={<div>Billing Page...</div>} />
-          <Route path="/user/support" element={<div>Support Page...</div>} />
+          <Route path="/user/support" element={<Support />} />
+          <Route path="/user/profile" element={<Profile />} />
 
           {/* Catch-all for 404 */}
           <Route path="*" element={<NotFound />} />
@@ -138,13 +142,18 @@ function AppContent() {
         </Routes>
       </main>
 
+
       {/* ✅ Footer visible only for public pages */}
       {!hideFooter && <Footer />}
+
+      {/* Global Help Button */}
+      <HelpButton />
     </div>
   );
 }
 
 import { ThemeProvider } from './context/ThemeContext';
+import { Toaster } from 'react-hot-toast';
 
 // ✅ Main App export
 export default function App() {
@@ -152,6 +161,7 @@ export default function App() {
     <ThemeProvider>
       <BrowserRouter>
         <AppContent />
+        <Toaster position="top-center" reverseOrder={false} />
       </BrowserRouter>
     </ThemeProvider>
   );

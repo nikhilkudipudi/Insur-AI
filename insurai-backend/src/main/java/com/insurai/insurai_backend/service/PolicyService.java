@@ -17,6 +17,9 @@ public class PolicyService {
 
     private final PolicyRepository policyRepository;
     private final UserDetailsRepository userRepo;
+    private final com.insurai.insurai_backend.repository.ClaimRepository claimRepository; // Inject ClaimRepository
+    private final com.insurai.insurai_backend.repository.PolicyApplicationRepository policyApplicationRepository; // Inject
+                                                                                                                  // PolicyApplicationRepository
     private final PasswordEncoder passwordEncoder;
 
     // ----------------------------------
@@ -111,6 +114,21 @@ public class PolicyService {
 
         Policy policy = policyRepository.findById(req.getPolicyId())
                 .orElseThrow(() -> new RuntimeException("Policy not found"));
+
+        // Manual Cascade Delete: Remove related Claims and Applications first
+        try {
+            // 1. Delete associated claims
+            List<com.insurai.insurai_backend.entity.Claim> claims = claimRepository.findByPolicy(policy);
+            claimRepository.deleteAll(claims);
+
+            // 2. Delete associated applications
+            List<com.insurai.insurai_backend.entity.PolicyApplication> applications = policyApplicationRepository
+                    .findByPolicy(policy);
+            policyApplicationRepository.deleteAll(applications);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete related records (Claims/Applications). Deletion aborted.");
+        }
 
         policyRepository.delete(policy);
         return "Policy deleted successfully!";
